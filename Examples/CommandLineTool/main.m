@@ -16,12 +16,20 @@ BOOL RunLoopShouldContinue = YES;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
 {
 	NSLog(@"%s %@", __PRETTY_FUNCTION__, inResponseDictionary);
+
+	NSArray *photos = [inResponseDictionary valueForKeyPath:@"photos.photo"];
+	for (NSDictionary *photo in photos) {
+		NSLog(@"%@", [inRequest.context photoSourceURLFromDictionary:photo size:OFFlickrMediumSize]);
+	}
+	
+	
 	RunLoopShouldContinue = NO;
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)error
 {
 	NSLog(@"%s %@", __PRETTY_FUNCTION__, error);
+		
 	RunLoopShouldContinue = NO;
 }
 @end
@@ -43,7 +51,7 @@ int main(int argc, char *argv[])
 	OFFlickrAPIRequest *request = [[OFFlickrAPIRequest alloc] initWithAPIContext:context];
 
 	[request setDelegate:delegate];
-	BOOL callResult = [request callAPIMethodWithGET:@"flickr.people.getPublicPhotos" arguments:[NSDictionary dictionaryWithObjectsAndKeys:userID, @"user_id", @"5", @"per_page", nil]];
+	BOOL callResult = [request callAPIMethodWithGET:@"flickr.people.getPublicPhotos" arguments:[NSDictionary dictionaryWithObjectsAndKeys:userID, @"user_id", @"50", @"per_page", nil]];
 					
 	while (RunLoopShouldContinue) {
 		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];

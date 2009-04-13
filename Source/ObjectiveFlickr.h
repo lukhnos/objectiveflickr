@@ -6,6 +6,13 @@
 
 #import "LFWebAPIKit.h"
 
+extern NSString *OFFlickrSmallSquareSize;		// "s" - 75x75
+extern NSString *OFFlickrThumbnailSize;			// "t" - 100 on longest side
+extern NSString *OFFlickrSmallSize;				// "m" - 240 on longest side
+extern NSString *OFFlickrMediumSize;			// (no size modifier) - 500 on longest side
+extern NSString *OFFlickrLargeSize;				// "b" - 1024 on longest side
+
+
 @interface OFFlickrAPIContext : NSObject
 {
     NSString *key;
@@ -13,14 +20,22 @@
     NSString *authToken;
     
     NSString *RESTAPIEndpoint;
+	NSString *photoSource;
 }
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret;
 
 - (void)setAuthToken:(NSString *)inAuthToken;
 - (NSString *)authToken;
 
+// URL provisioning
+- (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier;
+
+// API endpoints
 - (void)setRESTAPIEndpoint:(NSString *)inEndpoint;
 - (NSString *)RESTAPIEndpoint;
+
+- (void)setPhotoSource:(NSString *)inSource;
+- (NSString *)photoSource;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @property (nonatomic, readonly) NSString *key;
@@ -28,6 +43,7 @@
 @property (nonatomic, retain) NSString *authToken;
 
 @property (nonatomic, retain) NSString *RESTAPIEndpoint;
+@property (nonatomic, retain) NSString *photoSource;
 #endif
 @end
 
@@ -67,6 +83,7 @@ typedef id OFFlickrAPIRequestDelegateType;
     OFFlickrAPIRequestDelegateType delegate;
 }
 - (id)initWithAPIContext:(OFFlickrAPIContext *)inContext;
+- (OFFlickrAPIContext *)context;
 - (OFFlickrAPIRequestDelegateType)delegate;
 - (void)setDelegate:(OFFlickrAPIRequestDelegateType)inDelegate;
 - (NSTimeInterval)requestTimeoutInterval;
@@ -78,6 +95,7 @@ typedef id OFFlickrAPIRequestDelegateType;
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
+@property (nonatomic, readonly) OFFlickrAPIContext *context;
 @property (nonatomic, assign) OFFlickrAPIRequestDelegateType delegate;
 @property (nonatomic, assign) NSTimeInterval requestTimeoutInterval;
 #endif

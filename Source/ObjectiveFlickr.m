@@ -8,6 +8,12 @@
 #import "OFUtilities.h"
 #import "OFXMLMapper.h"
 
+NSString *OFFlickrSmallSquareSize = @"s";
+NSString *OFFlickrThumbnailSize = @"t";
+NSString *OFFlickrSmallSize = @"m";
+NSString *OFFlickrMediumSize = nil;
+NSString *OFFlickrLargeSize = @"b";
+
 NSString *OFFlickrAPIReturnedErrorDomain = @"com.flickr";
 NSString *OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
 
@@ -20,7 +26,8 @@ typedef unsigned int NSUInteger;
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
 @end
 
-#define kDEFAULT_FLICKR_REST_API_ENDPOINT   @"http://api.flickr.com/services/rest/"
+#define kDefaultFlickrRESTAPIEndpoint   @"http://api.flickr.com/services/rest/"
+#define kDefaultFlickrPhotoSource		@"http://static.flickr.com/"
 
 @implementation OFFlickrAPIContext
 - (void)dealloc
@@ -40,7 +47,8 @@ typedef unsigned int NSUInteger;
         key = [inKey copy];
         sharedSecret = [inSharedSecret copy];
         
-        RESTAPIEndpoint = kDEFAULT_FLICKR_REST_API_ENDPOINT;
+        RESTAPIEndpoint = kDefaultFlickrRESTAPIEndpoint;
+		photoSource = kDefaultFlickrPhotoSource;
     }
     return self;
 }
@@ -57,6 +65,35 @@ typedef unsigned int NSUInteger;
     return authToken;
 }
 
+- (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier
+{
+	// http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}_[mstb].jpg
+	// http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}.jpg
+	
+	NSString *farm = [inDictionary objectForKey:@"farm"];
+	NSString *photoID = [inDictionary objectForKey:@"id"];
+	NSString *secret = [inDictionary objectForKey:@"secret"];
+	NSString *server = [inDictionary objectForKey:@"server"];
+	
+	NSMutableString *URLString = [NSMutableString stringWithString:@"http://"];
+	if ([farm length]) {
+		[URLString appendFormat:@"farm%@.", farm];
+	}
+	
+	// skips "http://"
+	[URLString appendString:[photoSource substringFromIndex:7]];
+	[URLString appendFormat:@"%@/%@_%@", server, photoID, secret];
+	
+	if ([inSizeModifier length]) {
+		[URLString appendFormat:@"_%@.jpg"];
+	}
+	else {
+		[URLString appendString:@".jpg"];
+	}
+	
+	return [NSURL URLWithString:URLString];
+}
+
 - (void)setRESTAPIEndpoint:(NSString *)inEndpoint
 {
     NSString *tmp = RESTAPIEndpoint;
@@ -67,6 +104,22 @@ typedef unsigned int NSUInteger;
 - (NSString *)RESTAPIEndpoint
 {
     return RESTAPIEndpoint;
+}
+
+- (void)setPhotoSource:(NSString *)inSource
+{
+	if (![inSource hasPrefix:@"http://"]) {
+		return;
+	}
+	
+	NSString *tmp = photoSource;
+	photoSource = [inSource copy];
+	[tmp release];
+}
+
+- (NSString *)photoSource
+{
+	return photoSource;
 }
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
@@ -123,6 +176,11 @@ typedef unsigned int NSUInteger;
     }
     
     return self;
+}
+
+- (OFFlickrAPIContext *)context
+{
+	return context;
 }
 
 - (OFFlickrAPIRequestDelegateType)delegate
