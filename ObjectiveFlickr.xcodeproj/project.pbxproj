@@ -1,0 +1,208 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6ABF72F10F939C0B00B9179E /* ObjectiveFlickr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ABF72EF0F939C0B00B9179E /* ObjectiveFlickr.h */; };
+		6ABF72F20F939C0B00B9179E /* ObjectiveFlickr.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ABF72F00F939C0B00B9179E /* ObjectiveFlickr.m */; };
+		6ADECA6F0F939F650024C352 /* LFHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ADECA6A0F939F650024C352 /* LFHTTPRequest.h */; };
+		6ADECA700F939F650024C352 /* LFHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ADECA6B0F939F650024C352 /* LFHTTPRequest.m */; };
+		6ADECA720F939F650024C352 /* NSData+LFHTTPFormExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ADECA6D0F939F650024C352 /* NSData+LFHTTPFormExtensions.h */; };
+		6ADECA730F939F650024C352 /* NSData+LFHTTPFormExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ADECA6E0F939F650024C352 /* NSData+LFHTTPFormExtensions.m */; };
+		6ADECA930F939FB20024C352 /* LFWebAPIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ADECA920F939FB20024C352 /* LFWebAPIKit.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6ABF72E60F939BE600B9179E /* libObjectiveFlickr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectiveFlickr.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6ABF72EF0F939C0B00B9179E /* ObjectiveFlickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectiveFlickr.h; sourceTree = "<group>"; };
+		6ABF72F00F939C0B00B9179E /* ObjectiveFlickr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectiveFlickr.m; sourceTree = "<group>"; };
+		6ADECA6A0F939F650024C352 /* LFHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFHTTPRequest.h; sourceTree = "<group>"; };
+		6ADECA6B0F939F650024C352 /* LFHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFHTTPRequest.m; sourceTree = "<group>"; };
+		6ADECA6D0F939F650024C352 /* NSData+LFHTTPFormExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+LFHTTPFormExtensions.h"; sourceTree = "<group>"; };
+		6ADECA6E0F939F650024C352 /* NSData+LFHTTPFormExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+LFHTTPFormExtensions.m"; sourceTree = "<group>"; };
+		6ADECA920F939FB20024C352 /* LFWebAPIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFWebAPIKit.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6ABF72E40F939BE600B9179E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6ABF72CF0F939BB800B9179E = {
+			isa = PBXGroup;
+			children = (
+				6ADECA690F939F650024C352 /* LFWebAPIKit */,
+				6ABF72EE0F939C0B00B9179E /* Classes */,
+				6ABF72E70F939BE600B9179E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6ABF72E70F939BE600B9179E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6ABF72E60F939BE600B9179E /* libObjectiveFlickr.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6ABF72EE0F939C0B00B9179E /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				6ABF72EF0F939C0B00B9179E /* ObjectiveFlickr.h */,
+				6ABF72F00F939C0B00B9179E /* ObjectiveFlickr.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		6ADECA690F939F650024C352 /* LFWebAPIKit */ = {
+			isa = PBXGroup;
+			children = (
+				6ADECA920F939FB20024C352 /* LFWebAPIKit.h */,
+				6ADECA6A0F939F650024C352 /* LFHTTPRequest.h */,
+				6ADECA6B0F939F650024C352 /* LFHTTPRequest.m */,
+				6ADECA6D0F939F650024C352 /* NSData+LFHTTPFormExtensions.h */,
+				6ADECA6E0F939F650024C352 /* NSData+LFHTTPFormExtensions.m */,
+			);
+			path = LFWebAPIKit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		6ABF72E20F939BE600B9179E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6ABF72F10F939C0B00B9179E /* ObjectiveFlickr.h in Headers */,
+				6ADECA6F0F939F650024C352 /* LFHTTPRequest.h in Headers */,
+				6ADECA720F939F650024C352 /* NSData+LFHTTPFormExtensions.h in Headers */,
+				6ADECA930F939FB20024C352 /* LFWebAPIKit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		6ABF72E50F939BE600B9179E /* ObjectiveFlickr (library) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6ABF72EA0F939BE700B9179E /* Build configuration list for PBXNativeTarget "ObjectiveFlickr (library)" */;
+			buildPhases = (
+				6ABF72E20F939BE600B9179E /* Headers */,
+				6ABF72E30F939BE600B9179E /* Sources */,
+				6ABF72E40F939BE600B9179E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ObjectiveFlickr (library)";
+			productName = ObjectiveFlickr;
+			productReference = 6ABF72E60F939BE600B9179E /* libObjectiveFlickr.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6ABF72D10F939BB800B9179E /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 6ABF72D40F939BB800B9179E /* Build configuration list for PBXProject "ObjectiveFlickr" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 6ABF72CF0F939BB800B9179E;
+			productRefGroup = 6ABF72E70F939BE600B9179E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6ABF72E50F939BE600B9179E /* ObjectiveFlickr (library) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6ABF72E30F939BE600B9179E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6ABF72F20F939C0B00B9179E /* ObjectiveFlickr.m in Sources */,
+				6ADECA700F939F650024C352 /* LFHTTPRequest.m in Sources */,
+				6ADECA730F939F650024C352 /* NSData+LFHTTPFormExtensions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6ABF72D20F939BB800B9179E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		6ABF72D30F939BB800B9179E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		6ABF72E80F939BE700B9179E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = ObjectiveFlickr;
+			};
+			name = Debug;
+		};
+		6ABF72E90F939BE700B9179E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = ObjectiveFlickr;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6ABF72D40F939BB800B9179E /* Build configuration list for PBXProject "ObjectiveFlickr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6ABF72D20F939BB800B9179E /* Debug */,
+				6ABF72D30F939BB800B9179E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6ABF72EA0F939BE700B9179E /* Build configuration list for PBXNativeTarget "ObjectiveFlickr (library)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6ABF72E80F939BE700B9179E /* Debug */,
+				6ABF72E90F939BE700B9179E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6ABF72D10F939BB800B9179E /* Project object */;
+}
