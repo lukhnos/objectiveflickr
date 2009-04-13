@@ -14,6 +14,7 @@ extern NSString *OFXMLTextContentKey;
 	
 	NSMutableArray *elementStack;
 	NSMutableDictionary *currentDictionary;
+	NSString *currentElementName;
 }
 + (NSDictionary *)dictionaryMappedFromXMLData:(NSData *)inData;
 @end

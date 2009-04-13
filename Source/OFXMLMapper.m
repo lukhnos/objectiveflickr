@@ -7,7 +7,7 @@
 #import "OFXMLMapper.h"
 
 NSString *OFXMLMapperExceptionName = @"OFXMLMapperException";
-NSString *OFXMLTextContentKey = @"TextContent";
+NSString *OFXMLTextContentKey = @"_text";
 
 @implementation OFXMLMapper
 - (void)dealloc
@@ -77,11 +77,22 @@ NSString *OFXMLTextContentKey = @"TextContent";
 		[element addObject:[NSMutableDictionary dictionaryWithDictionary:mutableAttrDict]];
 	}
 	else {
-		[currentDictionary setObject:mutableAttrDict forKey:elementName];
+		// plural tag rule: if the parent's tag is plural and the incoming is singular, we'll make it into an array (we only handles the -s case)
+		
+		if ([currentElementName length] > [elementName length] && [currentElementName hasPrefix:elementName] && [currentElementName hasSuffix:@"s"]) {
+			[currentDictionary setObject:[NSMutableArray arrayWithObject:mutableAttrDict] forKey:elementName];
+		}
+		else {
+			[currentDictionary setObject:mutableAttrDict forKey:elementName];
+		}
 	}
 	
 	[elementStack insertObject:currentDictionary atIndex:0];
 	currentDictionary = mutableAttrDict;
+	
+	NSString *tmp = currentElementName;
+	currentElementName = [elementName retain];
+	[tmp release];
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName
