@@ -12,6 +12,9 @@ extern NSString *OFFlickrSmallSize;				// "m" - 240 on longest side
 extern NSString *OFFlickrMediumSize;			// (no size modifier) - 500 on longest side
 extern NSString *OFFlickrLargeSize;				// "b" - 1024 on longest side
 
+extern NSString *OFFlickrReadPermission;
+extern NSString *OFFlickrWritePermission;
+extern NSString *OFFlickrDeletePermission;
 
 @interface OFFlickrAPIContext : NSObject
 {
@@ -21,6 +24,7 @@ extern NSString *OFFlickrLargeSize;				// "b" - 1024 on longest side
     
     NSString *RESTAPIEndpoint;
 	NSString *photoSource;
+	NSString *authEndpoint;
 }
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret;
 
@@ -29,6 +33,7 @@ extern NSString *OFFlickrLargeSize;				// "b" - 1024 on longest side
 
 // URL provisioning
 - (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier;
+- (NSURL *)loginURLFromFrobDictionary:(NSDictionary *)inFrob requestedPermission:(NSString *)inPermission;
 
 // API endpoints
 - (void)setRESTAPIEndpoint:(NSString *)inEndpoint;
@@ -36,6 +41,9 @@ extern NSString *OFFlickrLargeSize;				// "b" - 1024 on longest side
 
 - (void)setPhotoSource:(NSString *)inSource;
 - (NSString *)photoSource;
+
+- (void)setAuthEndpoint:(NSString *)inEndpoint;
+- (NSString *)authEndpoint;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @property (nonatomic, readonly) NSString *key;

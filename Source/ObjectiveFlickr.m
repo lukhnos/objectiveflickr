@@ -14,6 +14,10 @@ NSString *OFFlickrSmallSize = @"m";
 NSString *OFFlickrMediumSize = nil;
 NSString *OFFlickrLargeSize = @"b";
 
+NSString *OFFlickrReadPermission = @"read";
+NSString *OFFlickrWritePermission = @"write";
+NSString *OFFlickrDeletePermission = @"delete";
+
 NSString *OFFlickrAPIReturnedErrorDomain = @"com.flickr";
 NSString *OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
 
@@ -28,6 +32,7 @@ typedef unsigned int NSUInteger;
 
 #define kDefaultFlickrRESTAPIEndpoint   @"http://api.flickr.com/services/rest/"
 #define kDefaultFlickrPhotoSource		@"http://static.flickr.com/"
+#define kDefaultFlickrAuthEndpoint		@"http://flickr.com/services/auth/"
 
 @implementation OFFlickrAPIContext
 - (void)dealloc
@@ -37,6 +42,8 @@ typedef unsigned int NSUInteger;
     [authToken release];
     
     [RESTAPIEndpoint release];
+	[photoSource release];
+	[authEndpoint release];
     
     [super dealloc];
 }
@@ -49,6 +56,7 @@ typedef unsigned int NSUInteger;
         
         RESTAPIEndpoint = kDefaultFlickrRESTAPIEndpoint;
 		photoSource = kDefaultFlickrPhotoSource;
+		authEndpoint = kDefaultFlickrAuthEndpoint;
     }
     return self;
 }
@@ -81,6 +89,9 @@ typedef unsigned int NSUInteger;
 	}
 	
 	// skips "http://"
+	NSAssert([server length], @"Must have server attribute");
+	NSAssert([photoID length], @"Must have id attribute");
+	NSAssert([secret length], @"Must have secret attribute");
 	[URLString appendString:[photoSource substringFromIndex:7]];
 	[URLString appendFormat:@"%@/%@_%@", server, photoID, secret];
 	
@@ -91,6 +102,14 @@ typedef unsigned int NSUInteger;
 		[URLString appendString:@".jpg"];
 	}
 	
+	return [NSURL URLWithString:URLString];
+}
+
+- (NSURL *)loginURLFromFrobDictionary:(NSDictionary *)inFrob requestedPermission:(NSString *)inPermission
+{
+	NSString *frob = [[inFrob objectForKey:@"frob"] objectForKey:OFXMLTextContentKey];
+	NSAssert([frob length], @"Must have a well-formed frob response dictionary");
+	NSString *URLString = [NSString stringWithFormat:@"%@?%@", authEndpoint, [self signedQueryFromArguments:[NSDictionary dictionaryWithObjectsAndKeys:frob, @"frob", inPermission, @"perms", nil]]];
 	return [NSURL URLWithString:URLString];
 }
 
@@ -120,6 +139,18 @@ typedef unsigned int NSUInteger;
 - (NSString *)photoSource
 {
 	return photoSource;
+}
+
+- (void)setAuthEndpoint:(NSString *)inEndpoint
+{
+	NSString *tmp = authEndpoint;
+	authEndpoint = [inEndpoint copy];
+	[tmp release];
+}
+
+- (NSString *)authEndpoint
+{
+	return authEndpoint;
 }
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4

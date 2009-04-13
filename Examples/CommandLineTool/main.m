@@ -22,7 +22,6 @@ BOOL RunLoopShouldContinue = YES;
 		NSLog(@"%@", [inRequest.context photoSourceURLFromDictionary:photo size:OFFlickrMediumSize]);
 	}
 	
-	
 	RunLoopShouldContinue = NO;
 }
 
