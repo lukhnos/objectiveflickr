@@ -7,16 +7,22 @@
 #import "ObjectiveFlickr.h"
 #import "SampleAPIKey.h"
 
+BOOL RunLoopShouldContinue = YES;
+
 @interface SimpleDelegate : NSObject <OFFlickrAPIRequestDelegate>
 @end
 
 @implementation SimpleDelegate
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
 {
+	NSLog(@"%s %@", __PRETTY_FUNCTION__, inResponseDictionary);
+	RunLoopShouldContinue = NO;
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)error
 {
+	NSLog(@"%s %@", __PRETTY_FUNCTION__, error);
+	RunLoopShouldContinue = NO;
 }
 @end
 
@@ -37,8 +43,12 @@ int main(int argc, char *argv[])
 	OFFlickrAPIRequest *request = [[OFFlickrAPIRequest alloc] initWithAPIContext:context];
 
 	[request setDelegate:delegate];
-	[request callAPIMethodWithGET:@"flickr.people.getPublicPhotos" arguments:[NSDictionary dictionaryWithObjectsAndKeys:userID, @"user_id", nil]];
-									   
+	BOOL callResult = [request callAPIMethodWithGET:@"flickr.people.getPublicPhotos" arguments:[NSDictionary dictionaryWithObjectsAndKeys:userID, @"user_id", @"5", @"per_page", nil]];
+					
+	while (RunLoopShouldContinue) {
+		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+	}
+	
 	[request release];
 	[context release];
 	[delegate release];

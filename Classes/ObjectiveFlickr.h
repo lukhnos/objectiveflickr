@@ -31,11 +31,15 @@
 #endif
 @end
 
+extern NSString *OFFlickrAPIReturnedErrorDomain;
+extern NSString *OFFlickrAPIRequestErrorDomain;
+
 enum {
-    OFFlickrAPIRequestConnectionError = 1,
-    OFFlickrAPIRequestTimeoutError = 2,
-    
-    OFFlickrAPIRequestUnknownError = 42
+	// refer to Flickr API document for Flickr's own error codes
+    OFFlickrAPIRequestConnectionError = 0x7fff0001,
+    OFFlickrAPIRequestTimeoutError = 0x7fff0002,    
+	OFFlickrAPIRequestFaultyXMLResponseError = 0x7fff0003,
+    OFFlickrAPIRequestUnknownError = 0x7fff0042
 };
 
 @class OFFlickrAPIRequest;

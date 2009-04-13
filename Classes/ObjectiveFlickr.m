@@ -6,6 +6,10 @@
 
 #import "ObjectiveFlickr.h"
 #import "OFUtilities.h"
+#import "OFXMLMapper.h"
+
+NSString *OFFlickrAPIReturnedErrorDomain = @"com.flickr";
+NSString *OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
 
 // compatibility typedefs
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
@@ -84,7 +88,6 @@ typedef unsigned int NSUInteger;
 	}
 	
 	// combine the args
-#warning Check old code to see if it's unescaped
 	NSMutableArray *argArray = [NSMutableArray array];
 	NSMutableString *sigString = [NSMutableString stringWithString:[sharedSecret length] ? sharedSecret : @""];
 	NSArray *sortedArgs = [[newArgs allKeys] sortedArrayUsingSelector:@selector(compare:)];
@@ -154,24 +157,45 @@ typedef unsigned int NSUInteger;
 
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
 {
-    // combine the parameters
- 
+    // combine the parameters 
 	NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
-	[newArgs setObject:inMethodName forKey:@"method"];
-	
+	[newArgs setObject:inMethodName forKey:@"method"];	
 	NSString *query = [context signedQueryFromArguments:newArgs];
-	NSLog(@"query = %@", query);
-	
 	NSString *URLString = [NSString stringWithFormat:@"%@?%@", [context RESTAPIEndpoint], query];
-	NSLog(@"URL = %@", URLString);
 	
-	return NO;
+	return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:[NSURL URLWithString:URLString] withData:nil];
 }
 
 #pragma mark LFHTTPRequest delegate methods
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request
 {
+	NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	
+	NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
+	NSString *stat = [rsp objectForKey:@"stat"];
+	
+	// this also fails when (responseDictionary, rsp, stat) == nil, so it's a guranteed way of checking the result
+	if (![stat isEqualToString:@"ok"]) {
+		NSDictionary *err = [rsp objectForKey:@"err"];
+		NSString *code = [err objectForKey:@"code"];
+		NSString *msg = [err objectForKey:@"msg"];
+	
+		NSError *toDelegateError;
+		if ([code length]) {
+			// intValue for 10.4-compatibility
+			toDelegateError = [NSError errorWithDomain:OFFlickrAPIReturnedErrorDomain code:[code intValue] userInfo:[msg length] ? [NSDictionary dictionaryWithObjectsAndKeys:msg, NSLocalizedFailureReasonErrorKey, nil] : nil];				
+		}
+		else {
+			toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestFaultyXMLResponseError userInfo:nil];
+		}
+			
+		if ([delegate respondsToSelector:@selector(flickrAPIRequest:didFailWithError:)]) {
+			[delegate flickrAPIRequest:self didFailWithError:toDelegateError];        
+		}
+		return;
+	}
+	
     if ([delegate respondsToSelector:@selector(flickrAPIRequest:didCompleteWithResponse:)]) {
+		[delegate flickrAPIRequest:self didCompleteWithResponse:rsp];
     }    
 }
 
@@ -179,20 +203,14 @@ typedef unsigned int NSUInteger;
 {
     NSError *toDelegateError = nil;
     if ([error isEqualToString:LFHTTPRequestConnectionError]) {
-        // OFFlickrAPIRequestConnectionError = 1,
-        
-
-        
+		toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestConnectionError userInfo:nil];
     }
     else if ([error isEqualToString:LFHTTPRequestTimeoutError]) {
-        // OFFlickrAPIRequestTimeoutError = 2,
+		toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestTimeoutError userInfo:nil];
     }
     else {
-        // OFFlickrAPIRequestUnknownError = 42
-        
+		toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestUnknownError userInfo:nil];
     }
-    
-    // - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)error;
     
     if ([delegate respondsToSelector:@selector(flickrAPIRequest:didFailWithError:)]) {
         [delegate flickrAPIRequest:self didFailWithError:toDelegateError];        
