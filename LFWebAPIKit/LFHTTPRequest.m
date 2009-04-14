@@ -202,11 +202,18 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
             
             CFStringRef contentLengthString = CFHTTPMessageCopyHeaderFieldValue(response, CFSTR("Content-Length"));
             if (contentLengthString) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
-                _expectedDataLength = [(NSString *)contentLengthString integerValue];
-#else
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
                 _expectedDataLength = [(NSString *)contentLengthString intValue];
+#else
+                if ([(NSString *)contentLengthString respondsToSelector:@selector(integerValue)]) {
+                    _expectedDataLength = [(NSString *)contentLengthString integerValue];                    
+                }
+                else {
+                    _expectedDataLength = [(NSString *)contentLengthString intValue];                    
+                }                
 #endif
+                
                 CFRelease(contentLengthString);
             }
 
