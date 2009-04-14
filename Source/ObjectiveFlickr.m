@@ -267,14 +267,36 @@ typedef unsigned int NSUInteger;
 
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
 {
+    if ([HTTPRequest isRunning]) {
+        return NO;
+    }
+    
     // combine the parameters 
 	NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
 	[newArgs setObject:inMethodName forKey:@"method"];	
 	NSString *query = [context signedQueryFromArguments:newArgs];
 	NSString *URLString = [NSString stringWithFormat:@"%@?%@", [context RESTAPIEndpoint], query];
 	
+    [HTTPRequest setContentType:nil];
 	return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:[NSURL URLWithString:URLString] withData:nil];
 }
+
+- (BOOL)callAPIMethodWithPOST:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
+{
+    if ([HTTPRequest isRunning]) {
+        return NO;
+    }
+    
+    // combine the parameters 
+	NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
+	[newArgs setObject:inMethodName forKey:@"method"];	
+	NSString *arguments = [context signedQueryFromArguments:newArgs];
+    NSData *postData = [arguments dataUsingEncoding:NSUTF8StringEncoding];
+
+	[HTTPRequest setContentType:LFHTTPRequestWWWFormURLEncodedContentType];
+	return [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context RESTAPIEndpoint]] withData:postData];
+}
+
 
 #pragma mark LFHTTPRequest delegate methods
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request
