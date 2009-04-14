@@ -24,5 +24,6 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-#define OBJECTIVE_FLICKR_SAMPLE_API_KEY @"cf732d5ea5a5568a50b50556e6cd0d50"
-#define OBJECTIVE_FLICKR_SAMPLE_API_SHARED_SECRET @"07676a799c5593b2"
+#error Supply your own Flickr API key and shared secret it, or apply from http://flickr.com/services/api/keys/apply
+#define OBJECTIVE_FLICKR_SAMPLE_API_KEY             @""
+#define OBJECTIVE_FLICKR_SAMPLE_API_SHARED_SECRET   @""
