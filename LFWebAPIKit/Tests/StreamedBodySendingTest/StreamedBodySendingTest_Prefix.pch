@@ -1,0 +1,7 @@
+//
+// Copyright (c) 2007-2009 Lithoglyph Inc. All rights reserved.
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
