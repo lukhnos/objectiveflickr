@@ -32,7 +32,7 @@
 #if TARGET_OS_IPHONE
     #import <CoreFoundation/CoreFoundation.h>
     #import <CFNetwork/CFNetwork.h>
-	#import <CFNetwork/CFProxySupport.h>
+    #import <CFNetwork/CFProxySupport.h>
 #endif
 
 extern NSString *LFHTTPRequestConnectionError;
@@ -54,29 +54,29 @@ extern NSString *LFHTTPRequestPOSTMethod;
     
     NSMutableData *_receivedData;
     NSString *_receivedContentType;
-	
-	CFReadStreamRef _readStream;
+    
+    CFReadStreamRef _readStream;
     NSTimer *_receivedDataTracker;
     NSTimeInterval _lastReceivedDataUpdateTime;
     
     NSTimer *_requestMessageBodyTracker;
     NSTimeInterval _lastSentDataUpdateTime;
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
-	NSUInteger _requestMessageBodySize;
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
+    NSUInteger _requestMessageBodySize;
     NSUInteger _expectedDataLength;
     NSUInteger _lastReceivedBytes;
     NSUInteger _lastSentBytes;
 #else
-	unsigned int _requestMessageBodySize;
-	unsigned int _expectedDataLength;
-	unsigned int _lastReceivedBytes;
+    unsigned int _requestMessageBodySize;
+    unsigned int _expectedDataLength;
+    unsigned int _lastReceivedBytes;
     unsigned int _lastSentBytes;
 #endif
 
-	void *_readBuffer;
-	size_t _readBufferSize;
-	
-	id _sessionInfo;
+    void *_readBuffer;
+    size_t _readBufferSize;
+    
+    id _sessionInfo;
 }
 // + (NSData *)fetchDataSynchronouslyFromURL:(NSURL *)url;
 // + (NSData *)fetchDataSynchronouslyFromURL:(NSURL *)url byPostingData:(NSData *)data;
@@ -87,6 +87,13 @@ extern NSString *LFHTTPRequestPOSTMethod;
 - (void)cancel;
 - (void)cancelWithoutDelegateMessage;
 - (BOOL)performMethod:(NSString *)methodName onURL:(NSURL *)url withData:(NSData *)data;
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
+- (BOOL)performMethod:(NSString *)methodName onURL:(NSURL *)url withInputStream:(NSInputStream *)inputStream knownContentSize:(NSUInteger)byteStreamSize;
+#else
+- (BOOL)performMethod:(NSString *)methodName onURL:(NSURL *)url withInputStream:(NSInputStream *)inputStream knownContentSize:(unsigned int)byteStreamSize;
+#endif
+
 - (NSData *)getReceivedDataAndDetachFromRequest;
 
 - (NSDictionary *)requestHeader;
@@ -98,7 +105,7 @@ extern NSString *LFHTTPRequestPOSTMethod;
 - (NSString *)contentType;
 - (void)setContentType:(NSString *)contentType;
 - (NSData *)receivedData;
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
 - (NSUInteger)expectedDataLength;
 #else
 - (unsigned int)expectedDataLength;
@@ -122,7 +129,7 @@ extern NSString *LFHTTPRequestPOSTMethod;
 @end
 
 @interface NSObject (LFHTTPRequestDelegate)
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
 - (void)httpRequest:(LFHTTPRequest *)request didReceiveStatusCode:(NSUInteger)statusCode URL:(NSURL *)url responseHeader:(CFHTTPMessageRef)header;
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request;
 - (void)httpRequestDidCancel:(LFHTTPRequest *)request;
@@ -140,6 +147,5 @@ extern NSString *LFHTTPRequestPOSTMethod;
 - (void)httpRequest:(LFHTTPRequest *)request receivedBytes:(unsigned int)bytesReceived expectedTotal:(unsigned int)total;
 - (void)httpRequest:(LFHTTPRequest *)request sentBytes:(unsigned int)bytesSent total:(unsigned int)total;
 - (void)httpRequest:(LFHTTPRequest *)request writeReceivedBytes:(void *)bytes size:(unsigned int)blockSize expectedTotal:(unsigned int)total;
-
 #endif
 @end
