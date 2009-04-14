@@ -107,6 +107,9 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 		snapPictureDescriptionLabel.text = @"Failed";
 		
 		[UIApplication sharedApplication].idleTimerDisabled = NO;
+
+		[[[[UIAlertView alloc] initWithTitle:@"API Failed" message:[inError description] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] autorelease] show];
+
 	}
 	else {
 		[[[[UIAlertView alloc] initWithTitle:@"API Failed" message:[inError description] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] autorelease] show];
@@ -155,6 +158,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     if (!flickrRequest) {
         flickrRequest = [[OFFlickrAPIRequest alloc] initWithAPIContext:[SnapAndRunAppDelegate sharedDelegate].flickrContext];
         flickrRequest.delegate = self;
+		flickrRequest.requestTimeoutInterval = 30.0;
     }
     
     return flickrRequest;
