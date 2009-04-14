@@ -387,7 +387,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     }
 
     NSDictionary *headerCheck = (NSDictionary*)CFHTTPMessageCopyAllHeaderFields(request);
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
     NSMakeCollectable((CFTypeRef)headerCheck);
 #endif
     [headerCheck release];
