@@ -39,6 +39,7 @@ NSString *OFFlickrReadPermission = @"read";
 NSString *OFFlickrWritePermission = @"write";
 NSString *OFFlickrDeletePermission = @"delete";
 
+NSString *OFFlickrUploadTempFilenamePrefix = @"org.lukhnos.ObjectiveFlickr.upload";
 NSString *OFFlickrAPIReturnedErrorDomain = @"com.flickr";
 NSString *OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
 
@@ -48,12 +49,14 @@ typedef unsigned int NSUInteger;
 #endif
 
 @interface OFFlickrAPIContext (PrivateMethods)
+- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments;
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
 @end
 
 #define kDefaultFlickrRESTAPIEndpoint   @"http://api.flickr.com/services/rest/"
 #define kDefaultFlickrPhotoSource		@"http://static.flickr.com/"
 #define kDefaultFlickrAuthEndpoint		@"http://flickr.com/services/auth/"
+#define kDefaultFlickrUploadEndpoint    @"http://api.flickr.com/services/upload/"
 
 @implementation OFFlickrAPIContext
 - (void)dealloc
@@ -65,6 +68,7 @@ typedef unsigned int NSUInteger;
     [RESTAPIEndpoint release];
 	[photoSource release];
 	[authEndpoint release];
+    [uploadEndpoint release];
     
     [super dealloc];
 }
@@ -78,6 +82,7 @@ typedef unsigned int NSUInteger;
         RESTAPIEndpoint = kDefaultFlickrRESTAPIEndpoint;
 		photoSource = kDefaultFlickrPhotoSource;
 		authEndpoint = kDefaultFlickrAuthEndpoint;
+        uploadEndpoint = kDefaultFlickrUploadEndpoint;
     }
     return self;
 }
@@ -174,6 +179,18 @@ typedef unsigned int NSUInteger;
 	return authEndpoint;
 }
 
+- (void)setUploadEndpoint:(NSString *)inEndpoint
+{
+    NSString *tmp = uploadEndpoint;
+    uploadEndpoint = [inEndpoint copy];
+    [tmp release];
+}
+
+- (NSString *)uploadEndpoint
+{
+    return uploadEndpoint;
+}
+
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @synthesize key;
 @synthesize sharedSecret;
@@ -181,7 +198,7 @@ typedef unsigned int NSUInteger;
 @end
 
 @implementation OFFlickrAPIContext (PrivateMethods)
-- (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments
+- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments
 {
     NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
 	if ([key length]) {
@@ -201,20 +218,42 @@ typedef unsigned int NSUInteger;
 	while (nextKey = [argEnumerator nextObject]) {
 		NSString *value = [newArgs objectForKey:nextKey];
 		[sigString appendFormat:@"%@%@", nextKey, value];
-		[argArray addObject:[NSString stringWithFormat:@"%@=%@", nextKey, OFEscapedURLStringFromNSString(value)]];
+		[argArray addObject:[NSArray arrayWithObjects:nextKey, OFEscapedURLStringFromNSString(value), nil]];
 	}
 	
-	NSString *signature = OFMD5HexStringFromNSString(sigString);
-	[argArray addObject:[NSString stringWithFormat:@"%@=%@", @"api_sig", signature]];
-	return [argArray componentsJoinedByString:@"&"];
+	NSString *signature = OFMD5HexStringFromNSString(sigString);    
+    [argArray addObject:[NSArray arrayWithObjects:@"api_sig", signature, nil]];
+	return argArray;
+}
+
+
+- (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments
+{
+    NSArray *argComponents = [self signedArgumentComponentsFromArguments:inArguments];
+    NSMutableArray *args = [NSMutableArray array];
+    NSEnumerator *componentEnumerator = [argComponents objectEnumerator];
+    NSArray *nextArg;
+    while (nextArg = [componentEnumerator nextObject]) {
+        [args addObject:[nextArg componentsJoinedByString:@"="]];
+    }
+    
+    return [args componentsJoinedByString:@"&"];
 }
 @end
+
+@interface OFFlickrAPIRequest (PrivateMethods)
+- (void)cleanUpTempFile;
+@end            
 
 @implementation OFFlickrAPIRequest
 - (void)dealloc
 {
     [context release];
     [HTTPRequest release];
+    [sessionInfo release];
+    
+    [self cleanUpTempFile];
+    
     [super dealloc];
 }
 
@@ -245,6 +284,18 @@ typedef unsigned int NSUInteger;
     delegate = inDelegate;
 }
 
+- (id)sessionInfo
+{
+    return [[sessionInfo retain] autorelease];
+}
+
+- (void)setSessionInfo:(id)inInfo
+{
+    id tmp = sessionInfo;
+    sessionInfo = [inInfo retain];
+    [tmp release];
+}
+
 - (NSTimeInterval)requestTimeoutInterval
 {
     return [HTTPRequest timeoutInterval];
@@ -263,6 +314,7 @@ typedef unsigned int NSUInteger;
 - (void)cancel
 {
     [HTTPRequest cancelWithoutDelegateMessage];
+    [self cleanUpTempFile];
 }
 
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
@@ -297,6 +349,79 @@ typedef unsigned int NSUInteger;
 	return [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context RESTAPIEndpoint]] withData:postData];
 }
 
+- (BOOL)uploadImageStream:(NSInputStream *)inInputStream suggestedFilename:(NSString *)inFilename MIMEType:(NSString *)inType arguments:(NSDictionary *)inArguments
+{
+    if ([HTTPRequest isRunning]) {
+        return NO;
+    }
+    
+    if (![[context authToken] length]) {
+        return NO;
+    }
+
+    // get the api_sig
+    NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:inArguments];
+    NSString *separator = OFGenerateUUIDString();
+    NSString *contentType = [NSString stringWithFormat:@"Content-Type: multipart/form-data; boundary=--%@", separator];
+    
+    // build the multipart form
+    NSMutableString *multipartBegin = [NSMutableString string];
+    NSMutableString *multipartEnd = [NSMutableString string];
+    
+    NSEnumerator *componentEnumerator = [argComponents objectEnumerator];
+    NSArray *nextArgComponent;
+    while (nextArgComponent = [componentEnumerator nextObject]) {        
+        [multipartBegin appendFormat:@"--%@\r\nContent-Disposition: form-data; name=\"%@\"\r\n\r\n%@\r\n", separator, [nextArgComponent objectAtIndex:0], [nextArgComponent objectAtIndex:1]];
+    }
+
+    // add filename, if nil, generate a UUID
+    [multipartBegin appendFormat:@"--%@\r\nContent-Disposition: form-data; name=\"photo\"; filename=\"%@\"\r\n", separator, [inFilename length] ? inFilename : OFGenerateUUIDString()];
+    [multipartBegin appendFormat:@"Content-Type: %@\r\n", inType];
+        
+    [multipartEnd appendFormat:@"\r\n--%@--", separator];
+    
+    
+    // now we have everything, create a temp file for this purpose; although UUID is inferior to 
+    [self cleanUpTempFile];
+    uploadTempFilename = [[NSTemporaryDirectory() stringByAppendingFormat:[NSString stringWithFormat:@"%@.%@", OFFlickrUploadTempFilenamePrefix, OFGenerateUUIDString()]] retain];
+    
+    // create the write stream
+    NSOutputStream *outputStream = [NSOutputStream outputStreamToFileAtPath:uploadTempFilename append:NO];
+    [outputStream open];
+    
+    const char *UTF8String;
+    size_t writeLength;
+    UTF8String = [multipartBegin UTF8String];
+    writeLength = strlen(UTF8String);
+    NSAssert([outputStream write:(uint8_t *)UTF8String maxLength:writeLength] == writeLength, @"Must write multipartBegin");
+
+    
+    UTF8String = [multipartEnd UTF8String];
+    writeLength = strlen(UTF8String);
+    NSAssert([outputStream write:(uint8_t *)UTF8String maxLength:writeLength] == writeLength, @"Must write multipartBegin");
+    [outputStream close];
+    
+    NSError *error;
+    NSDictionary *fileInfo = [[NSFileManager defaultManager] attributesOfItemAtPath:uploadTempFilename error:&error];
+    NSAssert(fileInfo && !error, @"Must have upload temp file");
+    NSNumber *fileSizeNumber = [fileInfo objectForKey:NSFileSize];
+    NSUInteger fileSize = 0;
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+    fileSize = [fileSizeNumber intValue];
+#else
+    if ([fileSizeNumber respondsToSelector:@selector(integerValue)]) {
+        fileSize = [fileSizeNumber integerValue];                    
+    }
+    else {
+        fileSize = [fileSizeNumber intValue];                    
+    }                
+#endif
+    
+    NSInputStream *inputStream = [NSInputStream inputStreamWithFileAtPath:uploadTempFilename];
+    [HTTPRequest setContentType:contentType];
+    [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context uploadEndpoint]] withInputStream:inputStream knownContentSize:fileSize];
+}
 
 #pragma mark LFHTTPRequest delegate methods
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request
@@ -325,7 +450,8 @@ typedef unsigned int NSUInteger;
 		}
 		return;
 	}
-	
+
+    [self cleanUpTempFile];
     if ([delegate respondsToSelector:@selector(flickrAPIRequest:didCompleteWithResponse:)]) {
 		[delegate flickrAPIRequest:self didCompleteWithResponse:rsp];
     }    
@@ -344,16 +470,33 @@ typedef unsigned int NSUInteger;
 		toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestUnknownError userInfo:nil];
     }
     
+    [self cleanUpTempFile];
     if ([delegate respondsToSelector:@selector(flickrAPIRequest:didFailWithError:)]) {
         [delegate flickrAPIRequest:self didFailWithError:toDelegateError];        
     }
 }
 
-- (void)httpRequest:(LFHTTPRequest *)request receivedBytes:(NSUInteger)bytesReceived expectedTotal:(NSUInteger)total
-{   
-}
-
 - (void)httpRequest:(LFHTTPRequest *)request sentBytes:(NSUInteger)bytesSent total:(NSUInteger)total
 {
+    if (uploadTempFilename && [delegate respondsToSelector:@selector(flickrAPIRequest:imageUploadSentBytes:totalBytes:)]) {
+        [delegate flickrAPIRequest:self imageUploadSentBytes:bytesSent totalBytes:total];
+    }
+}
+@end
+
+@implementation OFFlickrAPIRequest (PrivateMethods)
+- (void)cleanUpTempFile
+
+{
+    if (uploadTempFilename) {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if ([fileManager fileExistsAtPath:uploadTempFilename]) {
+            NSError *error = nil;
+            NSAssert([fileManager removeItemAtPath:uploadTempFilename error:&error], @"Should be able to remove temp file");
+        }
+        
+        [uploadTempFilename release];
+        uploadTempFilename = nil;
+    }
 }
 @end

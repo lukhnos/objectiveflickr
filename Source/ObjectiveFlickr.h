@@ -46,6 +46,7 @@ extern NSString *OFFlickrDeletePermission;
     NSString *RESTAPIEndpoint;
 	NSString *photoSource;
 	NSString *authEndpoint;
+    NSString *uploadEndpoint;
 }
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret;
 
@@ -66,6 +67,9 @@ extern NSString *OFFlickrDeletePermission;
 - (void)setAuthEndpoint:(NSString *)inEndpoint;
 - (NSString *)authEndpoint;
 
+- (void)setUploadEndpoint:(NSString *)inEndpoint;
+- (NSString *)uploadEndpoint;
+
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @property (nonatomic, readonly) NSString *key;
 @property (nonatomic, readonly) NSString *sharedSecret;
@@ -73,6 +77,8 @@ extern NSString *OFFlickrDeletePermission;
 
 @property (nonatomic, retain) NSString *RESTAPIEndpoint;
 @property (nonatomic, retain) NSString *photoSource;
+@property (nonatomic, retain) NSString *authEndpoint;
+@property (nonatomic, retain) NSString *uploadEndpoint;
 #endif
 @end
 
@@ -95,7 +101,12 @@ enum {
 @interface NSObject (OFFlickrAPIRequestDelegateCategory)
 #endif
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)error;
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(unsigned int)inSentBytes totalBytes:(unsigned int)inTotalBytes;
+#else
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
+#endif
 @end
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
@@ -110,11 +121,19 @@ typedef id OFFlickrAPIRequestDelegateType;
     LFHTTPRequest *HTTPRequest;
     
     OFFlickrAPIRequestDelegateType delegate;
+    id sessionInfo;
+    
+    NSString *uploadTempFilename;
 }
 - (id)initWithAPIContext:(OFFlickrAPIContext *)inContext;
 - (OFFlickrAPIContext *)context;
+
 - (OFFlickrAPIRequestDelegateType)delegate;
 - (void)setDelegate:(OFFlickrAPIRequestDelegateType)inDelegate;
+
+- (id)sessionInfo;
+- (void)setSessionInfo:(id)inInfo;
+
 - (NSTimeInterval)requestTimeoutInterval;
 - (void)setRequestTimeoutInterval:(NSTimeInterval)inTimeInterval;
 - (BOOL)isRunning;
@@ -123,6 +142,9 @@ typedef id OFFlickrAPIRequestDelegateType;
 // elementary methods
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments;
 - (BOOL)callAPIMethodWithPOST:(NSString *)inMethodName arguments:(NSDictionary *)inArguments;
+
+// image upload—we use NSInputStream here because we want to have flexibity; with this you can upload either a file or NSData from NSImage
+- (BOOL)uploadImageStream:(NSInputStream *)inInputStream suggestedFilename:(NSString *)inFilename MIMEType:(NSString *)inType arguments:(NSDictionary *)inArguments;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @property (nonatomic, readonly) OFFlickrAPIContext *context;

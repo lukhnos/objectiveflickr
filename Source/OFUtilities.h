@@ -58,3 +58,11 @@ NS_INLINE NSString *OFEscapedURLStringFromNSString(NSString *inStr)
 	return (NSString *)[NSMakeCollectable(escaped) autorelease];			    
 	#endif
 }
+
+NS_INLINE NSString *OFGenerateUUIDString()
+{
+    CFUUIDRef uuid = CFUUIDCreate(NULL);
+    CFStringRef uuidStr = CFUUIDCreateString(NULL, uuid);
+    CFRelease(uuid);
+    return [NSMakeCollectable(uuidStr) autorelease];
+}
