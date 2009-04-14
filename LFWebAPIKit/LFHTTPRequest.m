@@ -182,7 +182,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     if (!_receivedDataTracker) {        
         // update one last time the total sent bytes
         if ([_delegate respondsToSelector:@selector(httpRequest:sentBytes:total:)]) {
-            [_delegate httpRequest:self sentBytes:_requestMessageBodySize total:_requestMessageBodySize];
+            [_delegate httpRequest:self sentBytes:_lastSentBytes total:_lastSentBytes];
         }
         
         // stops _requestMessageBodyTracker
@@ -366,7 +366,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
             _requestMessageBodySize = byteStreamSize;
         }        
         else {
-            _requestMessageBodySize = 0;
+            _requestMessageBodySize = NSUIntegerMax;
         }
     }
     else {
@@ -390,11 +390,14 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
         CFHTTPMessageSetBody(request, (CFDataRef)data); 
     }
 
+	// for debug only, we comment them out here
+	/*
     NSDictionary *headerCheck = (NSDictionary*)CFHTTPMessageCopyAllHeaderFields(request);
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
+	#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
     NSMakeCollectable((CFTypeRef)headerCheck);
-#endif
+    #endif
     [headerCheck release];
+	 */
 
     CFReadStreamRef tmpReadStream;
     

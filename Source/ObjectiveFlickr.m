@@ -206,7 +206,7 @@ typedef unsigned int NSUInteger;
 	}
 	
 	if ([authToken length]) {
-		[newArgs setObject:key forKey:@"auth_token"];
+		[newArgs setObject:authToken forKey:@"auth_token"];
 	}
 	
 	// combine the args
@@ -263,7 +263,7 @@ typedef unsigned int NSUInteger;
         context = [inContext retain];
         
         HTTPRequest = [[LFHTTPRequest alloc] init];
-        [HTTPRequest setDelegate:self];        
+        [HTTPRequest setDelegate:self];
     }
     
     return self;
@@ -362,7 +362,7 @@ typedef unsigned int NSUInteger;
     // get the api_sig
     NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:inArguments ? inArguments : [NSDictionary dictionary]];
     NSString *separator = OFGenerateUUIDString();
-    NSString *contentType = [NSString stringWithFormat:@"Content-Type: multipart/form-data; boundary=--%@", separator];
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", separator];
     
     // build the multipart form
     NSMutableString *multipartBegin = [NSMutableString string];
@@ -376,7 +376,7 @@ typedef unsigned int NSUInteger;
 
     // add filename, if nil, generate a UUID
     [multipartBegin appendFormat:@"--%@\r\nContent-Disposition: form-data; name=\"photo\"; filename=\"%@\"\r\n", separator, [inFilename length] ? inFilename : OFGenerateUUIDString()];
-    [multipartBegin appendFormat:@"Content-Type: %@\r\n", inType];
+    [multipartBegin appendFormat:@"Content-Type: %@\r\n\r\n", inType];
         
     [multipartEnd appendFormat:@"\r\n--%@--", separator];
     
@@ -419,7 +419,7 @@ typedef unsigned int NSUInteger;
     NSAssert([outputStream write:(uint8_t *)UTF8String maxLength:writeLength] == writeLength, @"Must write multipartBegin");
     [outputStream close];
     
-    NSError *error;
+    NSError *error = nil;
     NSDictionary *fileInfo = [[NSFileManager defaultManager] attributesOfItemAtPath:uploadTempFilename error:&error];
     NSAssert(fileInfo && !error, @"Must have upload temp file");
     NSNumber *fileSizeNumber = [fileInfo objectForKey:NSFileSize];
@@ -437,6 +437,7 @@ typedef unsigned int NSUInteger;
 #endif
     
     NSInputStream *inputStream = [NSInputStream inputStreamWithFileAtPath:uploadTempFilename];
+	
     [HTTPRequest setContentType:contentType];
     [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context uploadEndpoint]] withInputStream:inputStream knownContentSize:fileSize];
 }

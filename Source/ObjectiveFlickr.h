@@ -98,6 +98,7 @@ enum {
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @protocol OFFlickrAPIRequestDelegate <NSObject>
+@optional
 #else
 @interface NSObject (OFFlickrAPIRequestDelegateCategory)
 #endif
