@@ -324,7 +324,7 @@ typedef unsigned int NSUInteger;
     }
     
     // combine the parameters 
-	NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
+	NSMutableDictionary *newArgs = inArguments ? [NSMutableDictionary dictionaryWithDictionary:inArguments] : [NSMutableDictionary dictionary];
 	[newArgs setObject:inMethodName forKey:@"method"];	
 	NSString *query = [context signedQueryFromArguments:newArgs];
 	NSString *URLString = [NSString stringWithFormat:@"%@?%@", [context RESTAPIEndpoint], query];
@@ -340,7 +340,7 @@ typedef unsigned int NSUInteger;
     }
     
     // combine the parameters 
-	NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
+	NSMutableDictionary *newArgs = inArguments ? [NSMutableDictionary dictionaryWithDictionary:inArguments] : [NSMutableDictionary dictionary];
 	[newArgs setObject:inMethodName forKey:@"method"];	
 	NSString *arguments = [context signedQueryFromArguments:newArgs];
     NSData *postData = [arguments dataUsingEncoding:NSUTF8StringEncoding];
@@ -349,7 +349,7 @@ typedef unsigned int NSUInteger;
 	return [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context RESTAPIEndpoint]] withData:postData];
 }
 
-- (BOOL)uploadImageStream:(NSInputStream *)inInputStream suggestedFilename:(NSString *)inFilename MIMEType:(NSString *)inType arguments:(NSDictionary *)inArguments
+- (BOOL)uploadImageStream:(NSInputStream *)inImageStream suggestedFilename:(NSString *)inFilename MIMEType:(NSString *)inType arguments:(NSDictionary *)inArguments
 {
     if ([HTTPRequest isRunning]) {
         return NO;
@@ -360,7 +360,7 @@ typedef unsigned int NSUInteger;
     }
 
     // get the api_sig
-    NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:inArguments];
+    NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:inArguments ? inArguments : [NSDictionary dictionary]];
     NSString *separator = OFGenerateUUIDString();
     NSString *contentType = [NSString stringWithFormat:@"Content-Type: multipart/form-data; boundary=--%@", separator];
     
@@ -395,6 +395,24 @@ typedef unsigned int NSUInteger;
     writeLength = strlen(UTF8String);
     NSAssert([outputStream write:(uint8_t *)UTF8String maxLength:writeLength] == writeLength, @"Must write multipartBegin");
 
+    // open the input stream
+    const size_t bufferSize = 65536;
+    size_t readSize = 0;
+    uint8_t *buffer = (uint8_t *)calloc(1, bufferSize);
+    NSAssert(buffer, @"Must have enough memory for copy buffer");
+
+    [inImageStream open];
+    while ([inImageStream hasBytesAvailable]) {
+        if (!(readSize = [inImageStream read:buffer maxLength:bufferSize])) {
+            break;
+        }
+        
+        NSAssert (readSize == [outputStream write:buffer maxLength:readSize], @"Must completes the writing");
+    }
+    
+    [inImageStream close];
+    free(buffer);
+    
     
     UTF8String = [multipartEnd UTF8String];
     writeLength = strlen(UTF8String);

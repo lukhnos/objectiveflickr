@@ -137,3 +137,10 @@ NSString *OFXMLTextContentKey = @"_text";
 	resultantDictionary = nil;
 }
 @end
+
+@implementation NSDictionary (OFXMLMapperExtension)
+- (NSString *)textContent
+{
+    return [self objectForKey:OFXMLTextContentKey];
+}
+@end

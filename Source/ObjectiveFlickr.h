@@ -26,6 +26,7 @@
 //
 
 #import "LFWebAPIKit.h"
+#import "OFXMLMapper.h"
 
 extern NSString *OFFlickrSmallSquareSize;		// "s" - 75x75
 extern NSString *OFFlickrThumbnailSize;			// "t" - 100 on longest side
@@ -102,10 +103,10 @@ enum {
 #endif
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(unsigned int)inSentBytes totalBytes:(unsigned int)inTotalBytes;
-#else
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4                
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
+#else
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(unsigned int)inSentBytes totalBytes:(unsigned int)inTotalBytes;
 #endif
 @end
 
@@ -144,11 +145,12 @@ typedef id OFFlickrAPIRequestDelegateType;
 - (BOOL)callAPIMethodWithPOST:(NSString *)inMethodName arguments:(NSDictionary *)inArguments;
 
 // image upload—we use NSInputStream here because we want to have flexibity; with this you can upload either a file or NSData from NSImage
-- (BOOL)uploadImageStream:(NSInputStream *)inInputStream suggestedFilename:(NSString *)inFilename MIMEType:(NSString *)inType arguments:(NSDictionary *)inArguments;
+- (BOOL)uploadImageStream:(NSInputStream *)inImageStream suggestedFilename:(NSString *)inFilename MIMEType:(NSString *)inType arguments:(NSDictionary *)inArguments;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 @property (nonatomic, readonly) OFFlickrAPIContext *context;
 @property (nonatomic, assign) OFFlickrAPIRequestDelegateType delegate;
+@property (nonatomic, retain) id sessionInfo;
 @property (nonatomic, assign) NSTimeInterval requestTimeoutInterval;
 #endif
 @end
