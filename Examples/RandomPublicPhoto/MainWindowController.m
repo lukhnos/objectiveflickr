@@ -24,7 +24,7 @@
 	[flickrRequest setDelegate:self];
 	[self nextRandomPhotoAction:self];
 	
-	[NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(nextRandomPhotoAction:) userInfo:nil repeats:YES];
+	[[NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(nextRandomPhotoAction:) userInfo:nil repeats:YES] fire];
 	
 	[[self window] center];
 }
