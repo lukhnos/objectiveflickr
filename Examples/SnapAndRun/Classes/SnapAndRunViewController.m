@@ -128,6 +128,20 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     [self dismissModalViewControllerAnimated:YES];
 }
 
+- (void)_startUpload:(UIImage *)image
+{
+    NSData *JPEGData = UIImageJPEGRepresentation(image, 1.0);
+    
+	snapPictureButton.enabled = NO;
+	snapPictureDescriptionLabel.text = @"Uploading";
+	
+    self.flickrRequest.sessionInfo = kUploadImageStep;
+    [self.flickrRequest uploadImageStream:[NSInputStream inputStreamWithData:JPEGData] suggestedFilename:@"Snap and Run Demo" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
+	
+	[UIApplication sharedApplication].idleTimerDisabled = YES;
+	
+}
+
 #ifndef __IPHONE_3_0
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
@@ -139,16 +153,9 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 #endif
 
     [self dismissModalViewControllerAnimated:YES];
-
-    NSData *JPEGData = UIImageJPEGRepresentation(image, 1.0);
-    
-	snapPictureButton.enabled = NO;
-	snapPictureDescriptionLabel.text = @"Uploading";
 	
-    self.flickrRequest.sessionInfo = kUploadImageStep;
-    [self.flickrRequest uploadImageStream:[NSInputStream inputStreamWithData:JPEGData] suggestedFilename:@"Snap and Run Demo" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
-	
-	[UIApplication sharedApplication].idleTimerDisabled = YES;
+	// we schedule this call in run loop because we want to dismiss the modal view first
+	[self performSelector:@selector(_startUpload:) withObject:image afterDelay:0.0];
 }
 
 #pragma mark Accesors
@@ -158,7 +165,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     if (!flickrRequest) {
         flickrRequest = [[OFFlickrAPIRequest alloc] initWithAPIContext:[SnapAndRunAppDelegate sharedDelegate].flickrContext];
         flickrRequest.delegate = self;
-		flickrRequest.requestTimeoutInterval = 30.0;
+		flickrRequest.requestTimeoutInterval = 60.0;
     }
     
     return flickrRequest;
