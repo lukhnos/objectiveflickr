@@ -49,8 +49,7 @@ Quick Start: Example Apps You Can Use
 2. Supply your own API key and shared secret. You need to copy
    `SimpleAPIKey.h.template` to `SimpleAPIKey.h`, and fill in the two
    macros there. If you don't have an API key, apply for yours at:
-
-   > http://www.flickr.com/services/api/keys/apply/
+   <http://www.flickr.com/services/api/keys/apply/>
    
    Make sure you have understood their terms and conditions.
 
@@ -93,7 +92,7 @@ Adding ObjectiveFlickr to Your Mac App Project
 6. Open the Info window of your target again. Set **Configuration** to **All 
    Configurations**, then in the **Framework Search Paths** property, add 
    `$(TARGET_BUILD_DIR)/$(FRAMEWORKS_FOLDER_PATH)`
-7. Use #import <ObjectiveFlickr/ObjectiveFlickr.h> in your project
+7. Use `#import <ObjectiveFlickr/ObjectiveFlickr.h>` in your project
 
 Adding ObjectiveFlickr to Your iPhone App Project
 -------------------------------------------------
@@ -105,9 +104,11 @@ Because iPhone SDK does not allow dynamically linked frameworks and bundles, we 
 2. On your app target, open the info window (using **Get Info** on the 
    target), then in the **General** tab, add `ObjectiveFlickr (library)` to 
    **Direct Dependencies**
-3. Drag `ObjecitveFlickr.framework` once again to the target's **Linked Binary 
+3. Also, in the same window, add `CFNetwork.framework` to
+   **Linked Libraries**
+4. Drag `ObjecitveFlickr.framework` once again to the target's **Linked Binary 
    With Libraries** group
-4. Open the Info window of your target again. Set **Configuration** to **All 
+5. Open the Info window of your target again. Set **Configuration** to **All 
    Configurations**, then in the **Header Search Paths** property, add these 
    two paths, separately:
 
@@ -115,7 +116,7 @@ Because iPhone SDK does not allow dynamically linked frameworks and bundles, we 
         <OF root>/LFWebAPIKit
             
    `<OF root>` is where you checked out ObjectiveFlickr.
-5. Use #import "ObjectiveFlickr.h" in your project
+6. Use `#import "ObjectiveFlickr.h"` in your project
 
 
 Key Ideas and Basic Usage
@@ -136,13 +137,13 @@ XML-formatted response*. Because they are already *structured data*,
 ObjectiveFlickr does not  translate further into other object classes. 
 
 Because of the minimalist design, you also need to have basic understanding of
-***how Flickr API works***. Refer to http://www.flickr.com/services/api/ for 
+***how Flickr API works***. Refer to <http://www.flickr.com/services/api/> for 
 the details. But basically, all you need to know is the methods you want to
 call, and which XML data (the key-values) Flickr will return.
 
 Typically, to develop a Flickr app for Mac or iPhone, you need to follow the following steps:
 
-1. Get a Flickr API key at http://www.flickr.com/services/api/keys/apply/
+1. Get you Flickr API key at <http://www.flickr.com/services/api/keys/apply/>
 2. Create an OFFlickrAPIContext object
 
         OFFlickrAPIContext *context = [[OFFlickrAPIContext alloc] initWithAPIKey:YOUR_KEY sharedSecret:YOUR_SHARED_SECRET];
@@ -349,8 +350,8 @@ Thread-Safety
 
 Each OFFlickrAPIRequest object can be used in the thread on which it is created. Do not pass them across threads. Delegate methods are also called in the thread in which the request object is running.
 
-CFNetwork-Only
---------------
+CFNetwork-Based
+---------------
 
 ObjectiveFlickr uses LFHTTPRequest, which uses only the CFNetwork stack.
 NSURLConnection is reported to have its own headaches. On the other hand,
@@ -359,6 +360,24 @@ a catch: on iPhone you cannot use untrusted root certs) and does not do
 HTTP authentication. It also does not manage caching. For web API
 integration, however, LFHTTPRequest provides a lean way of making and
 managing requests.
+
+One side note: LFHTTPRequest will use your system's shared proxy settings
+on your Mac or iPhone. This is how it requires `SystemConfiguration.framework`
+on Mac when being built alone.
+
+
+Possible Migration Path from ObjectiveFlickr 0.9.x
+--------------------------------------------------
+
+I didn't really seriously investigate this, but here are some thoughts:
+
+* In theory 0.9.x and 2.0 should co-exist as there is no class name clashes.
+* OFFlickrContext becomes OFFlickrAPIContext
+* OFFlickrInvocation becomes OFFlickrAPIRequest
+* OFFlickrUploader is now merged into OFFlickrAPIRequest
+* Delegate methods are greatly simplified and redesigned
+
+
 
 
 History
@@ -395,7 +414,7 @@ http://code.google.com/p/google-toolbox-for-mac/), Copyright (c) 2008 Google Inc
 
 Both ObjectiveFlickr and LFWebAPIKit are released under the MIT license,
 the full text of which is printed here as follows. You can also 
-find the text at: http://www.opensource.org/licenses/mit-license.php
+find the text at: <http://www.opensource.org/licenses/mit-license.php>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -422,6 +441,4 @@ Contact
 =======
 
 * lukhnos {at} lukhnos {dot} org
-* http://lukhnos.org (English)
-* http://lukhnos.org/blog/zh (Traditional Chinese)
-* http://lithoglyph.com (My company)
+* <http://lukhnos.org> (English)
