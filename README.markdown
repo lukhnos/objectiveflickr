@@ -181,16 +181,7 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
 
         [request callAPIMethodWithPOST:@"flickr.photos.setMeta" arguments:[NSDictionary dictionaryWithObjectsAndKeys:photoID, @"photo_id", newTitle, @"title", newDescription, @"description", nil]];
 
-6. To upload a picture, create an NSInputStream object from a file path
-   or the image data (NSData), then make the request. Here in the example
-   we assume we already have obtained the image data in JPEG, and we set
-   make private the uploaded picture (upload progress will be reported in the
-   delegate `flickrAPIRequest:imageUploadSentBytes:totalBytes:`):
-   
-        NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData]
-        [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
-      
-7. Handle the response or error in the delegate methods. If an error
+6. Handle the response or error in the delegate methods. If an error
    occurs, an NSError object is passed to the error-handling delegate 
    method. If the error object's domain is `OFFlickrAPIReturnedErrorDomain`,
    then it's a server-side error. You can refer to Flickr's API documentation
@@ -199,6 +190,143 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
    by lost network connection or transfer timeout.
    
    We will now talk about the response.
+
+
+How to Upload a Picture
+=======================
+
+To upload a picture, create an NSInputStream object from a file path
+or the image data (NSData), then make the request. Here in the example
+we assume we already have obtained the image data in JPEG, and we set
+make private the uploaded picture:
+   
+        NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData]
+        [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
+      
+Upload progress will be reported in thedelegate
+`flickrAPIRequest:imageUploadSentBytes:totalBytes:`
+
+The reason why ObjectiveFlickr asks for an NSInputStream object as input
+is that we don't want to read in the whole image into memory for the 
+preparation of upload data. With NSInputStream you have the flexibility
+of feeding ObjectiveFlickr an in-memory image data, a file, or even a
+virtualized image byte stream that comes from different (e.g. partitioned)
+sources.
+
+Make sure you have read [Flickr's upload API documentation](
+http://www.flickr.com/services/api/upload.api.html) so that you understand
+how to pick up the upload result. Please note that between the completion
+of uploading and the completion of the HTTP POST request itself (the moment
+at which you receive the response), there can be a *long* wait. So make sure
+you have a long timeout interval, especially when you upload a large image,
+and also design your UI accordingly.
+
+
+Auth Considerations
+===================
+
+If your app does not just read public photos, your app will need to get 
+user permission for accessing their photos. You need to use Flickr's
+authentication/authorization mechanism (hereafter "auth" to cover both
+steps) to get the *authToken* for your later access.
+
+This is, frankly, the most difficult part in using the whole Flickr API;
+anything that comes after that is easy and (usually) smooth. That alone
+is worth a whole tutorial, but I'll try to explain the essentials.
+
+Before that, get to know Flickr's own doc here:
+<http://www.flickr.com/services/api/misc.userauth.html>.
+
+There are two types of app auth:
+
+* [Desktop app](http://www.flickr.com/services/api/auth.howto.desktop.html)
+* [Web app](http://www.flickr.com/services/api/auth.howto.web.html)
+
+There is actually a "mobile app" auth, designed for feature phones or
+smart phones that aren't, well, not really smart, if you buy what Apple
+says. But since we are talking about *Mac* and *iPhone* apps, and they
+aren't any ye olde mobile platform, we'll skip that one and go straight
+into the two major types of app auth.
+
+
+Desktop App Auth, the Old Way
+-----------------------------
+
+Before, Mac developers were only interested in Desktop app auth. If you 
+have used any Mac Flickr app before (FlickrExport, HoudahGeo, Posterino, and
+many others), you know how it works:
+
+1. Open the app
+2. The app presents a dialog box, telling you it's going to open the web
+   browser. You log into Flickr, Flickr asks you if you grant permission
+   to the app currently asking for your permission (read, write, or
+   delete access).
+3. After you grant the permission, you *switch back* to the app, 
+   hit some "Continue" button on the app the dialog box.
+4. The app fetches the auth token from Flickr, and completes the process.
+
+To map that into your app's internal workings, you need to do these:
+
+1. Call [flickr.auth.getFrob](
+   http://www.flickr.com/services/api/flickr.auth.getFrob.html)
+2. After you receive the frob, pass the whole `inResponseDictionary` to
+   `-[OFFlickrAPIContext loginURLFromFrobDictionary:requestedPermission:]`
+   and get the returned NSURL object.
+3. Tell user that you're going to open the browser for them, prompt for
+   action.
+4. Open the browser with the URL you just got, then wait
+5. After user completes the auth, she will click on the "Continue" button
+   (or something like that).
+6. Your app then calls [flickr.auth.getToken](
+   http://www.flickr.com/services/api/flickr.auth.getToken.html) to get
+   the auth token
+7. Assign the auth token to your current Flickr API context with
+   `-[OFFlickrAPIContext setAuthToken:]`
+8. That's it. ObjectiveFlickr will add the `auth_token` argument to all 
+   your subsequent API calls, and you know have the access to all the APIs
+   to which the user has grant you permission.
+
+
+iPhone App Auth and the New Way
+-------------------------------
+
+iPhone and iPod Touch posed a challenge to the auth model above: Opening
+up Mobile Safari then ask the forgetful user to come back is a bad idea.
+
+So many iPhone developers have come up with this brilliant idea: Use 
+URL scheme to launch your app. It turns out that Flickr's web app auth
+serves the idea well. Here is how it works:
+
+1. The app prompts user that it's going to open up browser to ask for
+   permission.
+2. The user taps some "Open" button, and the app closes, Mobile Safari
+   pops up with Flickr's login (and then app auth) page.
+3. Then magically, Mobile Safari closes, and the app is launched again.
+4. There's no Step 4.
+
+What's behind the scene is that the iPhone app in question has registered
+a URL scheme, for example `someapp://` in its `Info.plist` and the app
+developer has configured their Flickr API key, so that when the user
+grants the app permission, Flickr will redirect the web page to that *URL*
+the app developer has previously designated. Mobile Safari opens that
+URL, and then the app is launched.
+
+In fact, Mac app can do that, too!
+
+Here's what you need to do:
+
+1. Register the URL scheme. Take a look at my own SnapAndRun-iPhone 
+   example app's `SnapAndRun-Info.plist` and this [CocoaDev article](
+   http://www.cocoadev.com/index.pl?HowToRegisterURLHandler) for details.
+2. Configure your Flickr API key so that the *callback URL* is set to 
+   that URL scheme.
+3. Follow the Steps 1-3 for desktop app auth above.
+4. Now, in your app launch URL handler (Mac and iPhone apps do it
+   differently, see Apple doc for details), get the frob that Flickr
+   has passed to you with the URL.
+5. Completes the Steps 6-8 for the desktop app auth above.
+
+Now you have done the most difficult part of using the Flickr API.
 
    
 How Flickr's XML Responses Are Mapped Back
@@ -324,6 +452,64 @@ Do remember that Flickr requires you present a link to the photo's web page
 wherever you show the photo in your app. So design your UI accordingly.
 
 
+Wacky XML Mappings
+==================
+
+Unfortunately, there are some Flickr responses that don't rigorously follow
+the "plural tag == array" rule. Consider the following snippet (tag
+attributes removed to highlight the issue at hand), from the API method
+[flickr.activity.userPhotos](
+http://www.flickr.com/services/api/flickr.activity.userPhotos.html):
+
+    <rsp stat="ok">
+    <items page="1" pages="1" perpage="50" total="3">
+    	<item type="photo">
+    		<title>Snap and Run Demo</title>
+    		<activity>
+    			<event type="comment">double comment 1</event>
+    			<event type="comment">double comment 2</event>
+    		</activity>
+    	</item>
+    	<item type="photo">
+    		<title>Snap and Run Demo</title>
+    		<activity>
+    			<event type="comment">test comment 1</event>
+    		</activity>
+    	</item>
+    </items>
+    </rsp>
+    
+Note how the `<activity>` tag can enclose *either* one *or* more 
+`<event>` tags. This is actually a gray area of Flickr API and I'm not 
+entirely sure if I should write that exception into the book (*i.e.* the
+logic of `OFXMLMapper`, which handles the job). The list of exceptions
+could never be comprehensive.
+
+We can make good use of Objective-C's dynamic nature to work around the
+problem. We can tell if it's an array:
+
+    // get the first element in the items
+    NSArray *itemArray = [responseDict valueForKeyPath:@"items.item"];
+    NSDictionary *firstItem = [itemArray objectAtIndex:0];
+
+    // get the "event" element and see if it's an array
+    id event = [firstItem valueForKeyPath:@"activity.event"];
+        
+    if ([event isKindOfClass:[NSArray class]]) {
+        // it has more than one elements
+        NSDictionary *someEvent = [event objectAtIndex:0];
+    }
+    else {
+        // that's the only element
+        NSDictionary *someEvent = event;
+    }
+    
+On the other hand, the reason why we build the plural tag rule in 
+`OFXMLMapper` is that writing the boilerplate above for frequently-used
+tags again and again is very tedious. Since `OFXMLMapper` already handles
+the plural tags, the borderline cases are easier to tackle.
+    
+
 Design Patterns and Tidbits
 ===========================
 
@@ -437,4 +623,5 @@ Contact
 =======
 
 * lukhnos {at} lukhnos {dot} org
+* [@lukhnos](http://twitter.com/lukhnos) on Twitter
 * <http://lukhnos.org> (English)
