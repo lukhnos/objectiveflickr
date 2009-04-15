@@ -10,7 +10,7 @@ What's New in 2.0
 Version 2.0 is a complete rewrite, with design integrity and extensibility in
 mind. Differences from 0.9.x include:
 
-* The framework now builds under all major Apple platforms: Mac OS X 10.4,
+* The framework now builds with all major Apple SDKs: Mac OS X 10.4,
   10.5, iPhone OS 2.2.x, and other beta version platforms to which I have 
   access. It also builds on both 32-bit and 64-bit platforms.
 * Ordinary request and upload request are now unified into one 
@@ -625,3 +625,11 @@ Contact
 * lukhnos {at} lukhnos {dot} org
 * [@lukhnos](http://twitter.com/lukhnos) on Twitter
 * <http://lukhnos.org> (English)
+
+Links
+=====
+
+* Project host: <http://github.com/lukhnos/objectiveflickr>
+* ObjectiveFlickr blog: <http://lukhnos.org/objectiveflickr/blog/>
+* Discussion group: <http://groups.google.com/group/objectiveflickr>
+* Issue tracking: <http://code.google.com/p/objectiveflickr/issues/list>
