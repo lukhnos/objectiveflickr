@@ -49,16 +49,13 @@ Quick Start: Example Apps You Can Use
 2. Supply your own API key and shared secret. You need to copy
    `SimpleAPIKey.h.template` to `SimpleAPIKey.h`, and fill in the two
    macros there. If you don't have an API key, apply for yours at:
-   <http://www.flickr.com/services/api/keys/apply/>
-   
+   <http://www.flickr.com/services/api/keys/apply/> .
    Make sure you have understood their terms and conditions.
 
 3. Remember to make your API key a "web app", and set the *Callback URL*
-   (not the *Application URL*!) to
+   (not the *Application URL*!) to:
 
-        snapnrun://auth?
-        
-   Our example apps will rely on this for authentication.
+        snapnrun://auth?   
 
 4. Build and run SnapAndRun for iPhone. The project is located at 
    `Examples/SnapAndRun-iPhone`
@@ -110,12 +107,12 @@ Because iPhone SDK does not allow dynamically linked frameworks and bundles, we 
    With Libraries** group
 5. Open the Info window of your target again. Set **Configuration** to **All 
    Configurations**, then in the **Header Search Paths** property, add these 
-   two paths, separately:
+   two paths, separately (`<OF root>` is where you checked out
+   ObjectiveFlickr):
 
         <OF root>/Source
-        <OF root>/LFWebAPIKit
-            
-   `<OF root>` is where you checked out ObjectiveFlickr.
+        <OF root>/LFWebAPIKit   
+       
 6. Use `#import "ObjectiveFlickr.h"` in your project
 
 
@@ -190,7 +187,6 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
         NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData]
         [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
    
-
    Upload progress will be reported in the delegate
    `flickrAPIRequest:imageUploadSentBytes:totalBytes:`
       
