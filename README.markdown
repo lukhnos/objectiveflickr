@@ -199,8 +199,8 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
    We will now talk about the response.
 
    
-How Flickr's XML Response Are Mapped Back
-=========================================
+How Flickr's XML Responses Are Mapped Back
+==========================================
 
 Flickr's default response format is XML. You can opt for JSON. Whichever
 format you choose, the gist is that *they are already structured data*.
