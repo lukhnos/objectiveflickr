@@ -47,6 +47,7 @@ extern NSString *OFFlickrDeletePermission;
     
     NSString *RESTAPIEndpoint;
 	NSString *photoSource;
+	NSString *photoWebPageSource;
 	NSString *authEndpoint;
     NSString *uploadEndpoint;
 }
@@ -57,6 +58,7 @@ extern NSString *OFFlickrDeletePermission;
 
 // URL provisioning
 - (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier;
+- (NSURL *)photoWebPageURLFromDictionary:(NSDictionary *)inDictionary;
 - (NSURL *)loginURLFromFrobDictionary:(NSDictionary *)inFrob requestedPermission:(NSString *)inPermission;
 
 // API endpoints
@@ -79,6 +81,7 @@ extern NSString *OFFlickrDeletePermission;
 
 @property (nonatomic, retain) NSString *RESTAPIEndpoint;
 @property (nonatomic, retain) NSString *photoSource;
+@property (nonatomic, retain) NSString *photoWebPageSource;
 @property (nonatomic, retain) NSString *authEndpoint;
 @property (nonatomic, retain) NSString *uploadEndpoint;
 #endif

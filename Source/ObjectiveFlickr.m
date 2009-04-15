@@ -53,10 +53,11 @@ typedef unsigned int NSUInteger;
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
 @end
 
-#define kDefaultFlickrRESTAPIEndpoint   @"http://api.flickr.com/services/rest/"
-#define kDefaultFlickrPhotoSource		@"http://static.flickr.com/"
-#define kDefaultFlickrAuthEndpoint		@"http://flickr.com/services/auth/"
-#define kDefaultFlickrUploadEndpoint    @"http://api.flickr.com/services/upload/"
+#define kDefaultFlickrRESTAPIEndpoint		@"http://api.flickr.com/services/rest/"
+#define kDefaultFlickrPhotoSource			@"http://static.flickr.com/"
+#define kDefaultFlickrPhotoWebPageSource	@"http://www.flickr.com/photos/"
+#define kDefaultFlickrAuthEndpoint			@"http://flickr.com/services/auth/"
+#define kDefaultFlickrUploadEndpoint		@"http://api.flickr.com/services/upload/"
 
 @implementation OFFlickrAPIContext
 - (void)dealloc
@@ -67,6 +68,7 @@ typedef unsigned int NSUInteger;
     
     [RESTAPIEndpoint release];
 	[photoSource release];
+	[photoWebPageSource release];
 	[authEndpoint release];
     [uploadEndpoint release];
     
@@ -81,6 +83,7 @@ typedef unsigned int NSUInteger;
         
         RESTAPIEndpoint = kDefaultFlickrRESTAPIEndpoint;
 		photoSource = kDefaultFlickrPhotoSource;
+		photoWebPageSource = kDefaultFlickrPhotoWebPageSource;
 		authEndpoint = kDefaultFlickrAuthEndpoint;
         uploadEndpoint = kDefaultFlickrUploadEndpoint;
     }
@@ -122,13 +125,18 @@ typedef unsigned int NSUInteger;
 	[URLString appendFormat:@"%@/%@_%@", server, photoID, secret];
 	
 	if ([inSizeModifier length]) {
-		[URLString appendFormat:@"_%@.jpg"];
+		[URLString appendFormat:@"_%@.jpg", inSizeModifier];
 	}
 	else {
 		[URLString appendString:@".jpg"];
 	}
 	
 	return [NSURL URLWithString:URLString];
+}
+
+- (NSURL *)photoWebPageURLFromDictionary:(NSDictionary *)inDictionary
+{
+	return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@/%@", photoWebPageSource, [inDictionary objectForKey:@"owner"], [inDictionary objectForKey:@"id"]]];
 }
 
 - (NSURL *)loginURLFromFrobDictionary:(NSDictionary *)inFrob requestedPermission:(NSString *)inPermission
@@ -165,6 +173,22 @@ typedef unsigned int NSUInteger;
 - (NSString *)photoSource
 {
 	return photoSource;
+}
+
+- (void)setPhotoWebPageSource:(NSString *)inSource
+{
+	if (![inSource hasPrefix:@"http://"]) {
+		return;
+	}
+	
+	NSString *tmp = photoWebPageSource;
+	photoWebPageSource = [inSource copy];
+	[tmp release];
+}
+
+- (NSString *)photoWebPageSource
+{
+	return photoWebPageSource;
 }
 
 - (void)setAuthEndpoint:(NSString *)inEndpoint
