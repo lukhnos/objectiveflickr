@@ -20,6 +20,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6A86664E0F9593B300325E1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6AE01E490F94DFA1000FE708 /* ObjectiveFlickr.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6A8666490F9593B200325E1C /* ObjectiveFlickr.framework */;
+			remoteInfo = ObjectiveFlickr;
+		};
 		6AE01E500F94DFA1000FE708 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6AE01E490F94DFA1000FE708 /* ObjectiveFlickr.xcodeproj */;
@@ -138,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				6AE01E510F94DFA1000FE708 /* libObjectiveFlickr.a */,
+				6A86664F0F9593B300325E1C /* ObjectiveFlickr.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -187,6 +195,14 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6A86664F0F9593B300325E1C /* ObjectiveFlickr.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = ObjectiveFlickr.framework;
+			path = build/Debug/ObjectiveFlickr.framework;
+			remoteRef = 6A86664E0F9593B300325E1C /* PBXContainerItemProxy */;
+			sourceTree = "<group>";
+		};
 		6AE01E510F94DFA1000FE708 /* libObjectiveFlickr.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

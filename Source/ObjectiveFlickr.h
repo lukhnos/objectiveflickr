@@ -26,6 +26,7 @@
 //
 
 #import "LFWebAPIKit.h"
+#import "OFUtilities.h"
 #import "OFXMLMapper.h"
 
 extern NSString *OFFlickrSmallSquareSize;		// "s" - 75x75
