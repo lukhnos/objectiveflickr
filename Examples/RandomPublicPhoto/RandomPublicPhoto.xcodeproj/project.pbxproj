@@ -22,21 +22,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 6A2621990F959E1A00638B88 /* ObjectiveFlickr.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 6A8666490F9593B200325E1C /* ObjectiveFlickr.framework */;
+			remoteGlobalIDString = 6A8666490F9593B200325E1C;
 			remoteInfo = ObjectiveFlickr;
 		};
 		6A2621A40F959E1A00638B88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6A2621990F959E1A00638B88 /* ObjectiveFlickr.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 6ABF72E60F939BE600B9179E /* libObjectiveFlickr.a */;
+			remoteGlobalIDString = 6ABF72E60F939BE600B9179E;
 			remoteInfo = "ObjectiveFlickr (library)";
 		};
 		6A2621B10F959E2F00638B88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6A2621990F959E1A00638B88 /* ObjectiveFlickr.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6A8666480F9593B200325E1C /* ObjectiveFlickr (framework) */;
+			remoteGlobalIDString = 6A8666480F9593B200325E1C;
 			remoteInfo = "ObjectiveFlickr (framework)";
 		};
 /* End PBXContainerItemProxy section */
