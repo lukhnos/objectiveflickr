@@ -200,7 +200,7 @@ or the image data (NSData), then make the request. Here in the example
 we assume we already have obtained the image data in JPEG, and we set
 make private the uploaded picture:
    
-        NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData]
+        NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData];
         [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
       
 Upload progress will be reported in thedelegate
