@@ -50,14 +50,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 6ABF72D10F939BB800B9179E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6ABF72E50F939BE600B9179E /* ObjectiveFlickr (library) */;
+			remoteGlobalIDString = 6ABF72E50F939BE600B9179E;
 			remoteInfo = "ObjectiveFlickr (library)";
 		};
 		6A8666AC0F95957000325E1C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6ABF72D10F939BB800B9179E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6A8666480F9593B200325E1C /* ObjectiveFlickr (framework) */;
+			remoteGlobalIDString = 6A8666480F9593B200325E1C;
 			remoteInfo = "ObjectiveFlickr (framework)";
 		};
 /* End PBXContainerItemProxy section */
@@ -301,7 +301,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ObjectiveFlickr-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -329,7 +329,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "ObjectiveFlickr-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,

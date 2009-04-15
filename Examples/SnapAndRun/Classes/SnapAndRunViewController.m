@@ -222,7 +222,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    NSDictionary *editingInfo = info;
+//  NSDictionary *editingInfo = info;
 #else
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
