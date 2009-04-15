@@ -203,7 +203,7 @@ make private the uploaded picture:
         NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData];
         [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
       
-Upload progress will be reported in thedelegate
+Upload progress will be reported to the delegate method
 `flickrAPIRequest:imageUploadSentBytes:totalBytes:`
 
 The reason why ObjectiveFlickr asks for an NSInputStream object as input
