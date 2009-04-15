@@ -187,8 +187,7 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
         NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData]
         [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
    
-   Upload progress will be reported in the delegate
-   `flickrAPIRequest:imageUploadSentBytes:totalBytes:`
+   Upload progress will be reported in the delegate `flickrAPIRequest:imageUploadSentBytes:totalBytes:`
       
 7. Handle the response or error in the delegate methods. If an error
    occurs, an NSError object is passed to the error-handling delegate 
