@@ -624,7 +624,7 @@ Contact
 
 * lukhnos {at} lukhnos {dot} org
 * [@lukhnos](http://twitter.com/lukhnos) on Twitter
-* <http://lukhnos.org> (English)
+* <http://lukhnos.tumblr.com> (blog in English)
 
 Links
 =====
