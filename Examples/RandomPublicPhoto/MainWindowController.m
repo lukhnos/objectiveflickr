@@ -26,6 +26,8 @@
 	
 	[[NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(nextRandomPhotoAction:) userInfo:nil repeats:YES] fire];
 	
+	[webView setDrawsBackground:NO];
+	
 	[[self window] center];
 }
 
