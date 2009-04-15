@@ -34,8 +34,10 @@ What's Not (Yet) There
 There are of course quite a few to-do's:
 
 * In-source API documentation
-* No coverage test is yet done
-* ObjectiveFlickr 0.9.x has a few convenient methods and tricks to simply 
+* Unit testings
+* Flickr API coverage tests (challenging though—how do you test a moving
+  target?)
+* ObjectiveFlickr 0.9.x has a few convenient methods and tricks to simplify 
   method calling; they are not ported here (yet, or will never be)
 
 
