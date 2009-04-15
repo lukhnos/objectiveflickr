@@ -167,7 +167,7 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
     In all other cases (OS X 10.5 and above or iPhone apps), you need to
     specify you are adopting the OFFlickrAPIRequestDelegate protocol. *E.g.*:
     
-        @interface MyViewController : UIViewController (OFFlickrAPIRequestDelegate)
+        @interface MyViewController : UIViewController <OFFlickrAPIRequestDelegate>
 
 
 5. Call the Flickr API methods you want to use. Here are a few examples.
