@@ -29,10 +29,14 @@
 #import "SnapAndRunAppDelegate.h"
 
 NSString *kGetFrobStep = @"kGetFrobStep";
-NSString *kGetAuthTokenStep = @"kGetFrobStep";
 NSString *kGetUserInfoStep = @"kGetUserInfoStep";
 NSString *kSetImagePropertiesStep = @"kSetImagePropertiesStep";
 NSString *kUploadImageStep = @"kUploadImageStep";
+
+@interface SnapAndRunViewController (PrivateMethods)
+- (void)updateUserInterface:(NSNotification *)notification;
+@end
+
 
 @implementation SnapAndRunViewController
 - (void)viewDidUnload
@@ -44,6 +48,8 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     self.authorizeDescriptionLabel = nil;
     self.snapPictureButton = nil;
     self.snapPictureDescriptionLabel = nil;
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)dealloc
@@ -60,6 +66,14 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 	if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.authToken length]) {
 		authorizeButton.enabled = NO;
 	}
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserInterface:) name:SnapAndRunShouldUpdateAuthInfoNotification object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self updateUserInterface:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -67,15 +81,73 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     [super didReceiveMemoryWarning];
 }
 
+- (void)updateUserInterface:(NSNotification *)notification
+{
+	if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.authToken length]) {		
+		[authorizeButton setTitle:@"Reauthorize" forState:UIControlStateNormal];
+		[authorizeButton setTitle:@"Reauthorize" forState:UIControlStateHighlighted];
+		[authorizeButton setTitle:@"Reauthorize" forState:UIControlStateDisabled];		
+		
+		if ([[SnapAndRunAppDelegate sharedDelegate].flickrUserName length]) {
+			authorizeDescriptionLabel.text = [NSString stringWithFormat:@"You are %@", [SnapAndRunAppDelegate sharedDelegate].flickrUserName];
+		}
+		else {
+			authorizeDescriptionLabel.text = @"You've logged in";
+		}
+		
+		snapPictureButton.enabled = YES;
+	}
+	else {
+		[authorizeButton setTitle:@"Authorize" forState:UIControlStateNormal];
+		[authorizeButton setTitle:@"Authorize" forState:UIControlStateHighlighted];
+		[authorizeButton setTitle:@"Authorize" forState:UIControlStateDisabled];
+		
+		authorizeDescriptionLabel.text = @"Login to Flickr";		
+		snapPictureButton.enabled = NO;
+	}
+	
+	if ([self.flickrRequest isRunning]) {
+		[snapPictureButton setTitle:@"Cancel" forState:UIControlStateNormal];
+		[snapPictureButton setTitle:@"Cancel" forState:UIControlStateHighlighted];
+		[snapPictureButton setTitle:@"Cancel" forState:UIControlStateDisabled];
+		authorizeButton.enabled = NO;
+	}
+	else {
+		if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+			[snapPictureButton setTitle:@"Snap" forState:UIControlStateNormal];
+			[snapPictureButton setTitle:@"Snap" forState:UIControlStateHighlighted];
+			[snapPictureButton setTitle:@"Snap" forState:UIControlStateDisabled];
+			snapPictureDescriptionLabel.text = @"Use camera";
+		}
+		else {
+			[snapPictureButton setTitle:@"Pick Picture" forState:UIControlStateNormal];
+			[snapPictureButton setTitle:@"Pick Picture" forState:UIControlStateHighlighted];
+			[snapPictureButton setTitle:@"Pick Picture" forState:UIControlStateDisabled];						
+			snapPictureDescriptionLabel.text = @"Pick from library";
+		}
+		
+		authorizeButton.enabled = YES;
+	}
+}
+
 #pragma mark Actions
 
 - (IBAction)snapPictureAction
 {
+	if ([self.flickrRequest isRunning]) {
+		[self.flickrRequest cancel];
+		[self updateUserInterface:nil];		
+		return;
+	}
+	
     [self presentModalViewController:self.imagePicker animated:YES];
 }
 
 - (IBAction)authorizeAction
 {
+	authorizeButton.enabled = NO;
+	authorizeDescriptionLabel.text = @"Logging in...";
+	
     self.flickrRequest.sessionInfo = kGetFrobStep;
     [self.flickrRequest callAPIMethodWithGET:@"flickr.auth.getFrob" arguments:nil];
 }
@@ -92,7 +164,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
         [[UIApplication sharedApplication] openURL:loginURL];
     }
 	else if (inRequest.sessionInfo == kUploadImageStep) {
-		snapPictureButton.enabled = YES;
+		[self updateUserInterface:nil];		
 		snapPictureDescriptionLabel.text = @"Done";
 		
 		[UIApplication sharedApplication].idleTimerDisabled = NO;		
@@ -103,9 +175,8 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 {
     NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, inRequest.sessionInfo, inError);
 	if (inRequest.sessionInfo == kUploadImageStep) {
-		snapPictureButton.enabled = YES;
-		snapPictureDescriptionLabel.text = @"Failed";
-		
+		[self updateUserInterface:nil];
+		snapPictureDescriptionLabel.text = @"Failed";		
 		[UIApplication sharedApplication].idleTimerDisabled = NO;
 
 		[[[[UIAlertView alloc] initWithTitle:@"API Failed" message:[inError description] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] autorelease] show];
@@ -118,7 +189,12 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes
 {
-	snapPictureDescriptionLabel.text = [NSString stringWithFormat:@"%lu/%lu", inSentBytes, inTotalBytes];
+	if (inSentBytes == inTotalBytes) {
+		snapPictureDescriptionLabel.text = @"Waiting for Flickr...";
+	}
+	else {
+		snapPictureDescriptionLabel.text = [NSString stringWithFormat:@"%lu/%lu (KB)", inSentBytes / 1024, inTotalBytes / 1024];
+	}
 }
 
 
@@ -139,7 +215,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     [self.flickrRequest uploadImageStream:[NSInputStream inputStreamWithData:JPEGData] suggestedFilename:@"Snap and Run Demo" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
 	
 	[UIApplication sharedApplication].idleTimerDisabled = YES;
-	
+	[self updateUserInterface:nil];
 }
 
 #ifndef __IPHONE_3_0
@@ -153,6 +229,8 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 #endif
 
     [self dismissModalViewControllerAnimated:YES];
+	
+	snapPictureDescriptionLabel.text = @"Preparing...";
 	
 	// we schedule this call in run loop because we want to dismiss the modal view first
 	[self performSelector:@selector(_startUpload:) withObject:image afterDelay:0.0];
