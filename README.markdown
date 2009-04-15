@@ -421,8 +421,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 Contact
 =======
 
-lukhnos {at} lukhnos {dot} org
-
-http://lukhnos.org (English)
-http://lukhnos.org/blog/zh (Traditional Chinese)
-http://lithoglyph.com (My company)
+* lukhnos {at} lukhnos {dot} org
+* http://lukhnos.org (English)
+* http://lukhnos.org/blog/zh (Traditional Chinese)
+* http://lithoglyph.com (My company)
