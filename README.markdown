@@ -588,6 +588,7 @@ Copyright and Software License
 ==============================
 
 ObjectiveFlickr Copyright (c) 2006-2009 Lukhnos D. Liu.
+
 LFWebAPIKit Copyright (c) 2007-2009 Lukhnos D. Liu and Lithoglyph Inc.
 
 One test in LFWebAPIKit (`Tests/StreamedBodySendingTest`) makes
