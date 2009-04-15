@@ -95,7 +95,7 @@ NSString *OFXMLTextContentKey = @"_text";
 			}
 		}
 		
-		[element addObject:[NSMutableDictionary dictionaryWithDictionary:mutableAttrDict]];
+		[element addObject:mutableAttrDict];
 	}
 	else {
 		// plural tag rule: if the parent's tag is plural and the incoming is singular, we'll make it into an array (we only handles the -s case)
