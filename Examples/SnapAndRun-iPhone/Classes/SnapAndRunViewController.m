@@ -164,11 +164,22 @@ NSString *kUploadImageStep = @"kUploadImageStep";
         [[UIApplication sharedApplication] openURL:loginURL];
     }
 	else if (inRequest.sessionInfo == kUploadImageStep) {
+		snapPictureDescriptionLabel.text = @"Setting properties...";
+
+        
+        NSLog(@"%@", inResponseDictionary);
+        NSString *photoID = [[inResponseDictionary valueForKeyPath:@"photoid"] textContent];
+
+        flickrRequest.sessionInfo = kSetImagePropertiesStep;
+        [flickrRequest callAPIMethodWithPOST:@"flickr.photos.setMeta" arguments:[NSDictionary dictionaryWithObjectsAndKeys:photoID, @"photo_id", @"Snap and Run", @"title", @"Uploaded from my iPhone/iPod Touch", @"description", nil]];        		        
+	}
+    else if (inRequest.sessionInfo == kSetImagePropertiesStep) {
 		[self updateUserInterface:nil];		
 		snapPictureDescriptionLabel.text = @"Done";
-		
+        
 		[UIApplication sharedApplication].idleTimerDisabled = NO;		
-	}
+        
+    }
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
