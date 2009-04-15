@@ -158,7 +158,7 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
 
         - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
         - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
-        - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes        
+        - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
 
     All three methods are optional ("informal protocol" in old Objective-C 
     speak; optional protocol methods in newspeak). *Nota bene*: If you
