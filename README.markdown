@@ -121,12 +121,12 @@ Because iPhone SDK does not allow dynamically linked frameworks and bundles, we 
 Key Ideas and Basic Usage
 =========================
 
-***ObjectiveFlickr is an asynchronous API.*** Because of the nature of GUI 
+**ObjectiveFlickr is an asynchronous API.** Because of the nature of GUI 
 app, all ObjectiveFlickr requests are asynchronous. You make a request, then 
 ObjectiveFlickr calls back your delegate methods and tell you if a request 
 succeeds or fails.
 
-***ObjectiveFlickr is a minimalist framework.*** The framework has essentially
+**ObjectiveFlickr is a minimalist framework.** The framework has essentially
 only two classes you have to deal with: `OFFlickrAPIContext` and
 `OFFlickrAPIRequest`. Unlike many other Flickr API libraries, ObjectiveFlickr 
 does *not* have classes like FlickrPhoto, FlickrUser, FlickrGroup or 
@@ -136,7 +136,7 @@ XML-formatted response*. Because they are already *structured data*,
 ObjectiveFlickr does not  translate further into other object classes. 
 
 Because of the minimalist design, you also need to have basic understanding of
-***how Flickr API works***. Refer to <http://www.flickr.com/services/api/> for 
+**how Flickr API works**. Refer to <http://www.flickr.com/services/api/> for 
 the details. But basically, all you need to know is the methods you want to
 call, and which XML data (the key-values) Flickr will return.
 
