@@ -182,12 +182,11 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
 6. To upload a picture, create an NSInputStream object from a file path
    or the image data (NSData), then make the request. Here in the example
    we assume we already have obtained the image data in JPEG, and we set
-   make private the uploaded picture:
+   make private the uploaded picture (upload progress will be reported in the
+   delegate `flickrAPIRequest:imageUploadSentBytes:totalBytes:`):
    
         NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData]
         [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
-   
-   Upload progress will be reported in the delegate `flickrAPIRequest:imageUploadSentBytes:totalBytes:`
       
 7. Handle the response or error in the delegate methods. If an error
    occurs, an NSError object is passed to the error-handling delegate 
