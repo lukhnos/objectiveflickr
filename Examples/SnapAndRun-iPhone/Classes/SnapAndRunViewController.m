@@ -28,7 +28,6 @@
 #import "SnapAndRunViewController.h"
 #import "SnapAndRunAppDelegate.h"
 
-NSString *kGetFrobStep = @"kGetFrobStep";
 NSString *kGetUserInfoStep = @"kGetUserInfoStep";
 NSString *kSetImagePropertiesStep = @"kSetImagePropertiesStep";
 NSString *kUploadImageStep = @"kUploadImageStep";
@@ -147,9 +146,9 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 {
 	authorizeButton.enabled = NO;
 	authorizeDescriptionLabel.text = @"Logging in...";
-	
-    self.flickrRequest.sessionInfo = kGetFrobStep;
-    [self.flickrRequest callAPIMethodWithGET:@"flickr.auth.getFrob" arguments:nil];
+    
+    NSURL *loginURL = [[SnapAndRunAppDelegate sharedDelegate].flickrContext loginURLFromFrobDictionary:nil requestedPermission:OFFlickrWritePermission];
+    [[UIApplication sharedApplication] openURL:loginURL];
 }
 
 #pragma mark OFFlickrAPIRequest delegate methods
@@ -157,13 +156,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 {
     NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, inRequest.sessionInfo, inResponseDictionary);
     
-    if (inRequest.sessionInfo == kGetFrobStep) {
-        NSLog(@"Frob: %@", [[inResponseDictionary valueForKeyPath:@"frob"] textContent]);
-        
-        NSURL *loginURL = [[SnapAndRunAppDelegate sharedDelegate].flickrContext loginURLFromFrobDictionary:inResponseDictionary requestedPermission:OFFlickrWritePermission];
-        [[UIApplication sharedApplication] openURL:loginURL];
-    }
-	else if (inRequest.sessionInfo == kUploadImageStep) {
+	if (inRequest.sessionInfo == kUploadImageStep) {
 		snapPictureDescriptionLabel.text = @"Setting properties...";
 
         

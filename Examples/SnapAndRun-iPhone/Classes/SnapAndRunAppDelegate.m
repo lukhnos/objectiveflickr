@@ -33,7 +33,6 @@ NSString *SnapAndRunShouldUpdateAuthInfoNotification = @"SnapAndRunShouldUpdateA
 
 // preferably, the auth token is stored in the keychain, but since working with keychain is a pain, we use the simpler default system
 NSString *kStoredAuthTokenKeyName = @"FlickrAuthToken";
-
 NSString *kGetAuthTokenStep = @"kGetAuthTokenStep";
 NSString *kCheckTokenStep = @"kCheckTokenStep";
 
