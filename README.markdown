@@ -320,11 +320,22 @@ Here's what you need to do:
    http://www.cocoadev.com/index.pl?HowToRegisterURLHandler) for details.
 2. Configure your Flickr API key so that the *callback URL* is set to 
    that URL scheme.
-3. Follow the Steps 1-3 for desktop app auth above.
+3. Get a login URL by calling
+   `-[OFFlickrAPIContext loginURLFromFrobDictionary:requestedPermission:]`,
+   note that you don't need to have a frob dictionary for getting web app
+   login (auth) URL, so just pass nil. You still need to pass the
+   permission argument, of course.
 4. Now, in your app launch URL handler (Mac and iPhone apps do it
    differently, see Apple doc for details), get the frob that Flickr
    has passed to you with the URL.
-5. Completes the Steps 6-8 for the desktop app auth above.
+5. Your app then calls [flickr.auth.getToken](
+  http://www.flickr.com/services/api/flickr.auth.getToken.html) to get
+  the auth token
+6. Assign the auth token to your current Flickr API context with
+  `-[OFFlickrAPIContext setAuthToken:]`
+7. That's it. ObjectiveFlickr will add the `auth_token` argument to all 
+  your subsequent API calls, and you know have the access to all the APIs
+  to which the user has grant you permission.
 
 Now you have done the most difficult part of using the Flickr API.
 
