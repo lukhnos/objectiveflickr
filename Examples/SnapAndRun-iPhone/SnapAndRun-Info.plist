@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>SnapAndRun.png</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.lukhnos.SnapAndRun</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -36,6 +36,6 @@
 				<string>snapnrun</string>
 			</array>
 		</dict>
-	</array>	
+	</array>
 </dict>
 </plist>

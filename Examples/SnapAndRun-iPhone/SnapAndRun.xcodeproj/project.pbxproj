@@ -15,6 +15,7 @@
 		2899E5220DE3E06400AC0155 /* SnapAndRunViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* SnapAndRunViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* SnapAndRunViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* SnapAndRunViewController.m */; };
+		6AAFED9A0F972C8700752C5C /* SnapAndRun.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AAFED990F972C8700752C5C /* SnapAndRun.png */; };
 		6AE01E550F94DFC4000FE708 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE01E540F94DFC4000FE708 /* CFNetwork.framework */; };
 		6AE01ED10F94DFDD000FE708 /* libObjectiveFlickr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE01E510F94DFA1000FE708 /* libObjectiveFlickr.a */; };
 /* End PBXBuildFile section */
@@ -56,6 +57,7 @@
 		28D7ACF70DDB3853001CB0EB /* SnapAndRunViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnapAndRunViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* SnapAndRun_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapAndRun_Prefix.pch; sourceTree = "<group>"; };
+		6AAFED990F972C8700752C5C /* SnapAndRun.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SnapAndRun.png; path = Images/SnapAndRun.png; sourceTree = "<group>"; };
 		6AE01E490F94DFA1000FE708 /* ObjectiveFlickr.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectiveFlickr.xcodeproj; path = ../../ObjectiveFlickr.xcodeproj; sourceTree = SOURCE_ROOT; };
 		6AE01E540F94DFC4000FE708 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		6AE01F0C0F94E3A7000FE708 /* SampleAPIKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleAPIKey.h; path = ../../SampleAPIKey.h; sourceTree = SOURCE_ROOT; };
@@ -123,6 +125,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6AAFED990F972C8700752C5C /* SnapAndRun.png */,
 				2899E5210DE3E06400AC0155 /* SnapAndRunViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* SnapAndRun-Info.plist */,
@@ -218,6 +221,7 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* SnapAndRunViewController.xib in Resources */,
+				6AAFED9A0F972C8700752C5C /* SnapAndRun.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
