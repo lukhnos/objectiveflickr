@@ -46,7 +46,7 @@ Quick Start: Example Apps You Can Use
 
 1. Check out the code from github:
 
-        git clone git@github.com:lukhnos/objectiveflickr.git
+        git clone git://github.com/lukhnos/objectiveflickr.git
 
 2. Supply your own API key and shared secret. You need to copy
    `SimpleAPIKey.h.template` to `SimpleAPIKey.h`, and fill in the two
