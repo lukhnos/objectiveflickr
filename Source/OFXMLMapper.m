@@ -35,6 +35,7 @@ NSString *OFXMLTextContentKey = @"_text";
 {
     [resultantDictionary release];
 	[elementStack release];
+	[currentElementName release];
     [super dealloc];
 }
 
