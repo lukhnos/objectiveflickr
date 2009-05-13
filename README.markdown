@@ -105,8 +105,8 @@ Because iPhone SDK does not allow dynamically linked frameworks and bundles, we 
    **Direct Dependencies**
 3. Also, in the same window, add `CFNetwork.framework` to
    **Linked Libraries**
-4. Drag `ObjecitveFlickr.framework` once again to the target's **Linked Binary 
-   With Libraries** group
+4. Drag `libObjecitveFlickr.a` to the target's **Linked Binary With Libraries
+   group**
 5. Open the Info window of your target again. Set **Configuration** to **All 
    Configurations**, then in the **Header Search Paths** property, add these 
    two paths, separately (`<OF root>` is where you checked out
