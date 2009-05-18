@@ -51,7 +51,7 @@ NS_INLINE NSString *OFMD5HexStringFromNSString(NSString *inStr)
 NS_INLINE NSString *OFEscapedURLStringFromNSString(NSString *inStr)
 {
 	CFStringRef escaped = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)inStr, NULL, CFSTR("&"), kCFStringEncodingUTF8);
-	
+
     #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4	
 	return (NSString *)[escaped autorelease];			    
     #else

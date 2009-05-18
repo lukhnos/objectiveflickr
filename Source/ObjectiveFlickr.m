@@ -49,7 +49,7 @@ typedef unsigned int NSUInteger;
 #endif
 
 @interface OFFlickrAPIContext (PrivateMethods)
-- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments;
+- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments useURIEscape:(BOOL)inUseEscape;
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
 @end
 
@@ -222,7 +222,7 @@ typedef unsigned int NSUInteger;
 @end
 
 @implementation OFFlickrAPIContext (PrivateMethods)
-- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments
+- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments useURIEscape:(BOOL)inUseEscape
 {
     NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
 	if ([key length]) {
@@ -242,7 +242,7 @@ typedef unsigned int NSUInteger;
 	while (nextKey = [argEnumerator nextObject]) {
 		NSString *value = [newArgs objectForKey:nextKey];
 		[sigString appendFormat:@"%@%@", nextKey, value];
-		[argArray addObject:[NSArray arrayWithObjects:nextKey, OFEscapedURLStringFromNSString(value), nil]];
+		[argArray addObject:[NSArray arrayWithObjects:nextKey, (inUseEscape ? OFEscapedURLStringFromNSString(value) : value), nil]];
 	}
 	
 	NSString *signature = OFMD5HexStringFromNSString(sigString);    
@@ -253,7 +253,7 @@ typedef unsigned int NSUInteger;
 
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments
 {
-    NSArray *argComponents = [self signedArgumentComponentsFromArguments:inArguments];
+    NSArray *argComponents = [self signedArgumentComponentsFromArguments:inArguments useURIEscape:YES];
     NSMutableArray *args = [NSMutableArray array];
     NSEnumerator *componentEnumerator = [argComponents objectEnumerator];
     NSArray *nextArg;
@@ -384,7 +384,7 @@ typedef unsigned int NSUInteger;
     }
 
     // get the api_sig
-    NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:inArguments ? inArguments : [NSDictionary dictionary]];
+    NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:(inArguments ? inArguments : [NSDictionary dictionary]) useURIEscape:NO];
     NSString *separator = OFGenerateUUIDString();
     NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", separator];
     
