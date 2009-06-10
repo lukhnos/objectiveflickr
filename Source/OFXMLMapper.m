@@ -129,7 +129,14 @@ NSString *OFXMLTextContentKey = @"_text";
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
-	[currentDictionary setObject:string forKey:OFXMLTextContentKey];
+	NSString *existingContent = [currentDictionary objectForKey:OFXMLTextContentKey];
+	if (existingContent) {
+		NSString *newContent = [existingContent stringByAppendingString:string];
+		[currentDictionary setObject:newContent forKey:OFXMLTextContentKey];		
+	}
+	else {
+		[currentDictionary setObject:string forKey:OFXMLTextContentKey];
+	}
 }
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError
