@@ -637,7 +637,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     return _shouldWaitUntilDone;
 }
 
-- (void)setShouldWaitUnitlDone:(BOOL)waitUntilDone
+- (void)setShouldWaitUntilDone:(BOOL)waitUntilDone
 {
     _shouldWaitUntilDone = waitUntilDone;
 }

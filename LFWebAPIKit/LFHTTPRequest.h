@@ -85,7 +85,7 @@ extern NSString *LFHTTPRequestPOSTMethod;
 - (void)cancelWithoutDelegateMessage;
 
 - (BOOL)shouldWaitUntilDone;
-- (void)setShouldWaitUnitlDone:(BOOL)waitUntilDone;
+- (void)setShouldWaitUntilDone:(BOOL)waitUntilDone;
 
 - (BOOL)performMethod:(NSString *)methodName onURL:(NSURL *)url withData:(NSData *)data;
 
@@ -118,14 +118,15 @@ extern NSString *LFHTTPRequestPOSTMethod;
 - (id)sessionInfo;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
-@property(copy, readwrite) NSDictionary *requestHeader;
-@property(assign, readwrite) NSTimeInterval timeoutInterval;
-@property(copy, readwrite) NSString *userAgent;
-@property(copy, readwrite) NSString *contentType;
-@property(assign, readonly) NSData *receivedData;
-@property(assign, readonly) NSUInteger expectedDataLength;
-@property(assign, readwrite) id delegate;
-@property(retain, readwrite) id sessionInfo;
+@property (copy) NSDictionary *requestHeader;
+@property (assign) NSTimeInterval timeoutInterval;
+@property (copy) NSString *userAgent;
+@property (copy) NSString *contentType;
+@property (readonly) NSData *receivedData;
+@property (readonly) NSUInteger expectedDataLength;
+@property (assign) id delegate;
+@property (retain) id sessionInfo;
+@property (assign) BOOL shouldWaitUntilDone;
 #endif
 @end
 
