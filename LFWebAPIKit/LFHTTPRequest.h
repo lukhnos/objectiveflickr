@@ -75,15 +75,18 @@ extern NSString *LFHTTPRequestPOSTMethod;
     size_t _readBufferSize;
     
     id _sessionInfo;
+    
+    BOOL _shouldWaitUntilDone;
 }
-// + (NSData *)fetchDataSynchronouslyFromURL:(NSURL *)url;
-// + (NSData *)fetchDataSynchronouslyFromURL:(NSURL *)url byPostingData:(NSData *)data;
-// + (NSData *)fetchDataSynchronouslyFromURL:(NSURL *)url byPostingMultipartData:(NSArray *)arrayOfData;
-// + (NSData *)fetchDataSynchronouslyFromURL:(NSURL *)url byPostingDictionary:(NSDictionary *)dictionary;
+
 - (id)init;
 - (BOOL)isRunning;
 - (void)cancel;
 - (void)cancelWithoutDelegateMessage;
+
+- (BOOL)shouldWaitUntilDone;
+- (void)setShouldWaitUnitlDone:(BOOL)waitUntilDone;
+
 - (BOOL)performMethod:(NSString *)methodName onURL:(NSURL *)url withData:(NSData *)data;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4

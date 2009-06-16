@@ -294,7 +294,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     if (![self isRunning]) {
         return;
     }
-    
+
     [self cleanUp];
 
     if ([_delegate respondsToSelector:@selector(httpRequestDidComplete:)]) {
@@ -392,15 +392,6 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
         CFHTTPMessageSetBody(request, (CFDataRef)data); 
     }
 
-	// for debug only, we comment them out here
-	/*
-    NSDictionary *headerCheck = (NSDictionary*)CFHTTPMessageCopyAllHeaderFields(request);
-	#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
-    NSMakeCollectable((CFTypeRef)headerCheck);
-    #endif
-    [headerCheck release];
-	 */
-
     CFReadStreamRef tmpReadStream;
     
     if (inputStream) {
@@ -493,6 +484,19 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     [[NSRunLoop currentRunLoop] addTimer:_requestMessageBodyTracker forMode:NSEventTrackingRunLoopMode];
     [[NSRunLoop currentRunLoop] addTimer:_requestMessageBodyTracker forMode:NSModalPanelRunLoopMode];
     #endif
+    
+    if (_shouldWaitUntilDone) {
+        NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
+        NSString *currentMode = [currentRunLoop currentMode];
+
+		if (![currentMode length]) {
+			currentMode = NSDefaultRunLoopMode;
+		}
+		
+        while ([self isRunning]) {
+            [currentRunLoop runMode:currentMode beforeDate:[NSDate distantFuture]];
+        }
+    }    
     
     return YES;
 }
@@ -628,11 +632,22 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     bzero(_readBuffer, newSize);
 }
 
+- (BOOL)shouldWaitUntilDone
+{
+    return _shouldWaitUntilDone;
+}
+
+- (void)setShouldWaitUnitlDone:(BOOL)waitUntilDone
+{
+    _shouldWaitUntilDone = waitUntilDone;
+}
+
 @end
 
 void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType eventType, void *clientCallBackInfo)
 {
     id pool = [NSAutoreleasePool new];
+	
     LFHTTPRequest *request = (LFHTTPRequest *)clientCallBackInfo;
     switch (eventType) {
         case kCFStreamEventHasBytesAvailable:
