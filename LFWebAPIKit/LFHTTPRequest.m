@@ -48,6 +48,7 @@ size_t LFHTTPRequestDefaultReadBufferSize = 16384;
 NSTimeInterval LFHTTPRequestDefaultTrackerFireInterval = 1.0;
 NSString *LFHTTPRequestWWWFormURLEncodedContentType = @"application/x-www-form-urlencoded";
 NSString *LFHTTPRequestGETMethod = @"GET";
+NSString *LFHTTPRequestHEADMethod = @"HEAD";
 NSString *LFHTTPRequestPOSTMethod = @"POST";
 
 
@@ -105,14 +106,24 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     [_receivedData release];
     [_receivedContentType release];
     
-    if (_sessionInfo) {
-        [_sessionInfo release];
-        _sessionInfo = nil;
-    }
+    [_sessionInfo release];
+    _sessionInfo = nil;
     
     free(_readBuffer);
     [super dealloc];
 }
+
+- (void)finalize
+{
+    [self cleanUp];
+    if (_readBuffer) {
+        free(_readBuffer);
+        _readBuffer = NULL;
+    }
+    
+    [super finalize];    
+}
+
 - (void)handleTimeout
 {
     [self cleanUp];
@@ -294,6 +305,65 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     if (![self isRunning]) {
         return;
     }
+	
+	// if no byte read, we need to present the header at least again, because readStreamHasBytesAvailable is never called
+	if (![_receivedData length]) {
+		if ([_delegate respondsToSelector:@selector(httpRequest:sentBytes:total:)]) {
+			[_delegate httpRequest:self sentBytes:_lastSentBytes total:_lastSentBytes];
+		}
+		
+		// stops _requestMessageBodyTracker
+		[_requestMessageBodyTracker invalidate];
+		[_requestMessageBodyTracker release];
+		_requestMessageBodyTracker = nil;
+		
+		NSUInteger statusCode = 0;
+		
+		CFURLRef finalURL = CFReadStreamCopyProperty(_readStream, kCFStreamPropertyHTTPFinalURL);
+		CFHTTPMessageRef response = (CFHTTPMessageRef)CFReadStreamCopyProperty(_readStream, kCFStreamPropertyHTTPResponseHeader);
+		if (response) {
+			statusCode = (NSUInteger)CFHTTPMessageGetResponseStatusCode(response);
+			
+			CFStringRef contentLengthString = CFHTTPMessageCopyHeaderFieldValue(response, CFSTR("Content-Length"));
+			if (contentLengthString) {
+				
+	#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+				_expectedDataLength = [(NSString *)contentLengthString intValue];
+	#else
+				if ([(NSString *)contentLengthString respondsToSelector:@selector(integerValue)]) {
+					_expectedDataLength = [(NSString *)contentLengthString integerValue];                    
+				}
+				else {
+					_expectedDataLength = [(NSString *)contentLengthString intValue];                    
+				}                
+	#endif
+				
+				CFRelease(contentLengthString);
+			}
+			
+			[_receivedContentType release];
+			_receivedContentType = nil;
+			
+			CFStringRef contentTypeString = CFHTTPMessageCopyHeaderFieldValue(response, CFSTR("Content-Type"));
+			if (contentTypeString) {
+				_receivedContentType = [(NSString *)contentTypeString copy];
+				CFRelease(contentTypeString);
+			}
+		}
+		
+		if ([_delegate respondsToSelector:@selector(httpRequest:didReceiveStatusCode:URL:responseHeader:)]) {
+			[_delegate httpRequest:self didReceiveStatusCode:statusCode URL:(NSURL *)finalURL responseHeader:response];
+		}
+		
+		if (finalURL) {
+			CFRelease(finalURL);            
+		}
+		
+		if (response) {
+			CFRelease(response);
+		}
+	}
+	
 
     [self cleanUp];
 
@@ -343,6 +413,10 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 - (BOOL)_performMethod:(NSString *)methodName onURL:(NSURL *)url withData:(NSData *)data orWithInputStream:(NSInputStream *)inputStream knownContentSize:(unsigned int)byteStreamSize
 #endif
 {
+	if (!url) {
+		return NO;
+	}
+	
     if (_readStream) {
         return NO;
     }

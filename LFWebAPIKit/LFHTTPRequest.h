@@ -38,6 +38,7 @@ extern NSString *LFHTTPRequestTimeoutError;
 extern NSTimeInterval LFHTTPRequestDefaultTimeoutInterval;
 extern NSString *LFHTTPRequestWWWFormURLEncodedContentType;
 extern NSString *LFHTTPRequestGETMethod;
+extern NSString *LFHTTPRequestHEADMethod;
 extern NSString *LFHTTPRequestPOSTMethod;
 
 @interface LFHTTPRequest : NSObject
