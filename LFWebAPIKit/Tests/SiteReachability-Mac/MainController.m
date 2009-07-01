@@ -41,9 +41,9 @@
 		[self updateNotCheckingStatusLabel];
 	}
 	else {
+		[statusLabel setStringValue:@"Checking"];
 		[reachability startChecking];
 		[startButton setTitle:@"Stop Checking"];
-		[statusLabel setStringValue:@"Checking"];
 	}
 }
 

@@ -30,13 +30,14 @@
 #import <arpa/inet.h>
 
 #define kDefaultSite @"http://mail.lukhnos.org"
-#define kDefaultTimeoutInterval 30.0
+#define kDefaultTimeoutInterval 15.0
 
-//#define LFSRDebug(format, ...)
-#define LFSRDebug NSLog
+#define LFSRDebug(format, ...)
+// #define LFSRDebug NSLog
 
 NSString *LFSiteReachabilityConnectionTypeWiFi = @"LFSiteReachabilityConnectionTypeWiFi";
 NSString *LFSiteReachabilityConnectionTypeWWAN = @"LFSiteReachabilityConnectionTypeWWAN";
+NSString *LFSiteReachabilityNotReachableStatus = @"LFSiteReachabilityNotReachable";
 
 #ifndef TARGET_OS_IPHONE
 	#define SCNetworkReachabilityFlags SCNetworkConnectionFlags
@@ -84,9 +85,12 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 {
 	LFSRDebug(@"%s", __PRETTY_FUNCTION__);
 	[inTimer invalidate];
-	
-	if ([delegate respondsToSelector:@selector(reachability:siteIsNotAvailable:)]) {
-		[delegate reachability:self siteIsNotAvailable:siteURL];
+
+	if (lastCheckStatus != LFSiteReachabilityNotReachableStatus) {
+		lastCheckStatus = LFSiteReachabilityNotReachableStatus;
+		if ([delegate respondsToSelector:@selector(reachability:siteIsNotAvailable:)]) {
+			[delegate reachability:self siteIsNotAvailable:siteURL];
+		}
 	}		
 }
 
@@ -122,16 +126,22 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 			}				
 		}
 		else {
-			if (connectionRequestNotRequired && [delegate respondsToSelector:@selector(reachability:site:isAvailableOverConnectionType:)]) {
-				[delegate reachability:self site:siteURL isAvailableOverConnectionType:connectionType];
-				return;
-			}			
+			if (lastCheckStatus != connectionType) {
+				lastCheckStatus = connectionType;
+				if (connectionRequestNotRequired && [delegate respondsToSelector:@selector(reachability:site:isAvailableOverConnectionType:)]) {
+					[delegate reachability:self site:siteURL isAvailableOverConnectionType:connectionType];
+					return;
+				}			
+			}
 		}
 	}
 	
 	// if all fails
-	if ([delegate respondsToSelector:@selector(reachability:siteIsNotAvailable:)]) {
-		[delegate reachability:self siteIsNotAvailable:siteURL];
+	if (lastCheckStatus != LFSiteReachabilityNotReachableStatus) {
+		lastCheckStatus = LFSiteReachabilityNotReachableStatus;
+		if ([delegate respondsToSelector:@selector(reachability:siteIsNotAvailable:)]) {
+			[delegate reachability:self siteIsNotAvailable:siteURL];
+		}
 	}
 }
 
@@ -172,10 +182,7 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 	
 	BOOL createTimeoutTimer = YES;
 	if (SCNetworkReachabilityGetFlags(reachability, &flags)) {
-		if (flags & kSCNetworkReachabilityFlagsReachable) {
-			[self handleReachabilityCallbackFlags:flags];
-		}
-		
+		[self handleReachabilityCallbackFlags:flags];
 		createTimeoutTimer = NO;
 	}
 	
@@ -198,6 +205,8 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 		CFRelease(reachability);
 		reachability = NULL;		
 	}
+	
+	lastCheckStatus = nil;
 }
 
 - (BOOL)isChecking
@@ -224,18 +233,24 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 {
 	LFSRDebug(@"%s, connection type: %@, received data: %@", __PRETTY_FUNCTION__, [request sessionInfo], [request receivedData]);
 	
-	if ([delegate respondsToSelector:@selector(reachability:site:isAvailableOverConnectionType:)]) {
-		[delegate reachability:self site:siteURL isAvailableOverConnectionType:[request sessionInfo]];
-	}	
+	if (lastCheckStatus != [request sessionInfo]) {
+		lastCheckStatus = [request sessionInfo];
+		if ([delegate respondsToSelector:@selector(reachability:site:isAvailableOverConnectionType:)]) {
+			[delegate reachability:self site:siteURL isAvailableOverConnectionType:[request sessionInfo]];
+		}	
+	}
 }
 
 - (void)httpRequest:(LFHTTPRequest *)request didFailWithError:(NSString *)error
 {
 	LFSRDebug(@"%s, error: %@", __PRETTY_FUNCTION__, error);
 	
-	if ([delegate respondsToSelector:@selector(reachability:siteIsNotAvailable:)]) {
-		[delegate reachability:self siteIsNotAvailable:siteURL];
-	}	
+	if (lastCheckStatus != LFSiteReachabilityNotReachableStatus) {
+		lastCheckStatus = LFSiteReachabilityNotReachableStatus;
+		if ([delegate respondsToSelector:@selector(reachability:siteIsNotAvailable:)]) {
+			[delegate reachability:self siteIsNotAvailable:siteURL];
+		}	
+	}
 }
 
 @synthesize delegate;

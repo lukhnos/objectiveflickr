@@ -54,19 +54,21 @@
 		[self updateNotCheckingStatusLabel];
 	}
 	else {
+		statusLabel.text = @"Checking";
 		[reachability startChecking];
 		[startButton setTitle:@"Stop Checking" forState:UIControlStateNormal];
-		statusLabel.text = @"Checking";		
 	}
 }
 
 - (void)reachability:(LFSiteReachability *)inReachability site:(NSURL *)inURL isAvailableOverConnectionType:(NSString *)inConnectionType
 {
+	NSLog(@"%s, connection type: ", __PRETTY_FUNCTION__, inConnectionType);
 	statusLabel.text = [NSString stringWithFormat:@"Reachable, type: %@", ((inConnectionType == LFSiteReachabilityConnectionTypeWiFi) ? @"WiFi" : @"WWAN")];
 }
 
 - (void)reachability:(LFSiteReachability *)inReachability siteIsNotAvailable:(NSURL *)inURL
 {
+	NSLog(@"%s", __PRETTY_FUNCTION__);
 	statusLabel.text = @"Not reachable";
 }
 

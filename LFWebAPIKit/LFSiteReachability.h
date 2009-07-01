@@ -45,7 +45,8 @@ extern NSString *LFSiteReachabilityConnectionTypeWWAN;
     NSURL *siteURL;
     SCNetworkReachabilityRef reachability;
     LFHTTPRequest *siteRequest;
-    NSTimer *timeoutTimer;
+    NSTimer *timeoutTimer;	
+	id lastCheckStatus;
 }
 - (void)startChecking;
 - (void)stopChecking;
