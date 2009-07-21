@@ -255,7 +255,6 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 
 @synthesize delegate;
 @synthesize siteURL;
-@synthesize timeoutInterval;
 @end
 
 
