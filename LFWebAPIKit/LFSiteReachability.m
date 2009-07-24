@@ -29,7 +29,7 @@
 #import "LFSiteReachability.h"
 #import <arpa/inet.h>
 
-#define kDefaultSite @"http://mail.lukhnos.org"
+#define kDefaultSite @"http://google.com"
 #define kDefaultTimeoutInterval 15.0
 
 #define LFSRDebug(format, ...)
