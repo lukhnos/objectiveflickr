@@ -29,15 +29,15 @@
 #import "OFUtilities.h"
 #import "OFXMLMapper.h"
 
-extern NSString *OFFlickrSmallSquareSize;		// "s" - 75x75
-extern NSString *OFFlickrThumbnailSize;			// "t" - 100 on longest side
-extern NSString *OFFlickrSmallSize;				// "m" - 240 on longest side
-extern NSString *OFFlickrMediumSize;			// (no size modifier) - 500 on longest side
-extern NSString *OFFlickrLargeSize;				// "b" - 1024 on longest side
+extern NSString *const OFFlickrSmallSquareSize;		// "s" - 75x75
+extern NSString *const OFFlickrThumbnailSize;		// "t" - 100 on longest side
+extern NSString *const OFFlickrSmallSize;			// "m" - 240 on longest side
+extern NSString *const OFFlickrMediumSize;			// (no size modifier) - 500 on longest side
+extern NSString *const OFFlickrLargeSize;			// "b" - 1024 on longest side
 
-extern NSString *OFFlickrReadPermission;
-extern NSString *OFFlickrWritePermission;
-extern NSString *OFFlickrDeletePermission;
+extern NSString *const OFFlickrReadPermission;
+extern NSString *const OFFlickrWritePermission;
+extern NSString *const OFFlickrDeletePermission;
 
 @interface OFFlickrAPIContext : NSObject
 {
@@ -87,8 +87,8 @@ extern NSString *OFFlickrDeletePermission;
 #endif
 @end
 
-extern NSString *OFFlickrAPIReturnedErrorDomain;
-extern NSString *OFFlickrAPIRequestErrorDomain;
+extern NSString *const OFFlickrAPIReturnedErrorDomain;
+extern NSString *const OFFlickrAPIRequestErrorDomain;
 
 enum {
 	// refer to Flickr API document for Flickr's own error codes

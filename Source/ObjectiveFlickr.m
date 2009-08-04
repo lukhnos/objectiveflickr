@@ -29,19 +29,19 @@
 #import "OFUtilities.h"
 #import "OFXMLMapper.h"
 
-NSString *OFFlickrSmallSquareSize = @"s";
-NSString *OFFlickrThumbnailSize = @"t";
-NSString *OFFlickrSmallSize = @"m";
-NSString *OFFlickrMediumSize = nil;
-NSString *OFFlickrLargeSize = @"b";
+NSString *const OFFlickrSmallSquareSize = @"s";
+NSString *const OFFlickrThumbnailSize = @"t";
+NSString *const OFFlickrSmallSize = @"m";
+NSString *const OFFlickrMediumSize = nil;
+NSString *const OFFlickrLargeSize = @"b";
 
-NSString *OFFlickrReadPermission = @"read";
-NSString *OFFlickrWritePermission = @"write";
-NSString *OFFlickrDeletePermission = @"delete";
+NSString *const OFFlickrReadPermission = @"read";
+NSString *const OFFlickrWritePermission = @"write";
+NSString *const OFFlickrDeletePermission = @"delete";
 
-NSString *OFFlickrUploadTempFilenamePrefix = @"org.lukhnos.ObjectiveFlickr.upload";
-NSString *OFFlickrAPIReturnedErrorDomain = @"com.flickr";
-NSString *OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
+NSString *const OFFlickrUploadTempFilenamePrefix = @"org.lukhnos.ObjectiveFlickr.upload";
+NSString *const OFFlickrAPIReturnedErrorDomain = @"com.flickr";
+NSString *const OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
 
 // compatibility typedefs
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4

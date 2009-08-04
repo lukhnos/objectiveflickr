@@ -27,8 +27,8 @@
 
 #import "OFXMLMapper.h"
 
-NSString *OFXMLMapperExceptionName = @"OFXMLMapperException";
-NSString *OFXMLTextContentKey = @"_text";
+NSString *const OFXMLMapperExceptionName = @"OFXMLMapperException";
+NSString *const OFXMLTextContentKey = @"_text";
 
 @implementation OFXMLMapper
 - (void)dealloc

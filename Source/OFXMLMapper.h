@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString *OFXMLTextContentKey;
+extern NSString *const OFXMLTextContentKey;
 
 @interface OFXMLMapper : NSObject
 {
