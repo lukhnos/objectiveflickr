@@ -38,18 +38,20 @@
 
 
 
-NSString *LFHRDefaultUserAgent = nil;
+NSString *const LFHTTPRequestConnectionError = @"HTTP request connection lost";
+NSString *const LFHTTPRequestTimeoutError = @"HTTP request timeout";
 
-NSString *LFHTTPRequestConnectionError = @"HTTP request connection lost";
-NSString *LFHTTPRequestTimeoutError = @"HTTP request timeout";
+const NSTimeInterval LFHTTPRequestDefaultTimeoutInterval = 10.0;
+NSString *const LFHTTPRequestWWWFormURLEncodedContentType = @"application/x-www-form-urlencoded";
+NSString *const LFHTTPRequestGETMethod = @"GET";
+NSString *const LFHTTPRequestHEADMethod = @"HEAD";
+NSString *const LFHTTPRequestPOSTMethod = @"POST";
 
-NSTimeInterval LFHTTPRequestDefaultTimeoutInterval = 10.0;
-size_t LFHTTPRequestDefaultReadBufferSize = 16384;
-NSTimeInterval LFHTTPRequestDefaultTrackerFireInterval = 1.0;
-NSString *LFHTTPRequestWWWFormURLEncodedContentType = @"application/x-www-form-urlencoded";
-NSString *LFHTTPRequestGETMethod = @"GET";
-NSString *LFHTTPRequestHEADMethod = @"HEAD";
-NSString *LFHTTPRequestPOSTMethod = @"POST";
+
+// internal defaults
+NSString *const LFHRDefaultUserAgent = nil;
+const size_t LFHTTPRequestDefaultReadBufferSize = 16384;
+const NSTimeInterval LFHTTPRequestDefaultTrackerFireInterval = 1.0;
 
 
 void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType eventType, void *clientCallBackInfo);

@@ -33,13 +33,13 @@
     #import <CFNetwork/CFProxySupport.h>
 #endif
 
-extern NSString *LFHTTPRequestConnectionError;
-extern NSString *LFHTTPRequestTimeoutError;
-extern NSTimeInterval LFHTTPRequestDefaultTimeoutInterval;
-extern NSString *LFHTTPRequestWWWFormURLEncodedContentType;
-extern NSString *LFHTTPRequestGETMethod;
-extern NSString *LFHTTPRequestHEADMethod;
-extern NSString *LFHTTPRequestPOSTMethod;
+extern NSString *const LFHTTPRequestConnectionError;
+extern NSString *const LFHTTPRequestTimeoutError;
+extern const NSTimeInterval LFHTTPRequestDefaultTimeoutInterval;
+extern NSString *const LFHTTPRequestWWWFormURLEncodedContentType;
+extern NSString *const LFHTTPRequestGETMethod;
+extern NSString *const LFHTTPRequestHEADMethod;
+extern NSString *const LFHTTPRequestPOSTMethod;
 
 @interface LFHTTPRequest : NSObject
 {

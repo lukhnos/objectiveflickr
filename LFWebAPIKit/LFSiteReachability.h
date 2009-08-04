@@ -29,8 +29,8 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "LFHTTPRequest.h"
 
-extern NSString *LFSiteReachabilityConnectionTypeWiFi;
-extern NSString *LFSiteReachabilityConnectionTypeWWAN;
+extern NSString *const LFSiteReachabilityConnectionTypeWiFi;
+extern NSString *const LFSiteReachabilityConnectionTypeWWAN;
 
 @class LFSiteReachability;
 

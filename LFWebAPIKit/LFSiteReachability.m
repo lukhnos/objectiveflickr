@@ -29,15 +29,15 @@
 #import "LFSiteReachability.h"
 #import <arpa/inet.h>
 
-#define kDefaultSite @"http://google.com"
-#define kDefaultTimeoutInterval 15.0
+static NSString *kDefaultSite = @"http://google.com";
+static NSTimeInterval kDefaultTimeoutInterval = 15.0;
 
 #define LFSRDebug(format, ...)
 // #define LFSRDebug NSLog
 
-NSString *LFSiteReachabilityConnectionTypeWiFi = @"LFSiteReachabilityConnectionTypeWiFi";
-NSString *LFSiteReachabilityConnectionTypeWWAN = @"LFSiteReachabilityConnectionTypeWWAN";
-NSString *LFSiteReachabilityNotReachableStatus = @"LFSiteReachabilityNotReachable";
+NSString *const LFSiteReachabilityConnectionTypeWiFi = @"LFSiteReachabilityConnectionTypeWiFi";
+NSString *const LFSiteReachabilityConnectionTypeWWAN = @"LFSiteReachabilityConnectionTypeWWAN";
+NSString *const LFSiteReachabilityNotReachableStatus = @"LFSiteReachabilityNotReachable";
 
 #ifndef TARGET_OS_IPHONE
 	#define SCNetworkReachabilityFlags SCNetworkConnectionFlags
