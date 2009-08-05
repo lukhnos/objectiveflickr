@@ -25,7 +25,7 @@ mind. Differences from 0.9.x include:
   
 If you already use ObjectiveFlickr 0.9.x, the bad news is that 2.0 is not
 backward compatible. The good news, though, is that it uses a different set
-of class names. Some migration tips is offered near the end of this document.
+of class names. Some migration tips are offered near the end of this document.
 
 
 What's Not (Yet) There
