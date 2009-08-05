@@ -39,7 +39,7 @@ NSString *const LFSiteReachabilityConnectionTypeWiFi = @"LFSiteReachabilityConne
 NSString *const LFSiteReachabilityConnectionTypeWWAN = @"LFSiteReachabilityConnectionTypeWWAN";
 NSString *const LFSiteReachabilityNotReachableStatus = @"LFSiteReachabilityNotReachable";
 
-#ifndef TARGET_OS_IPHONE
+#if !TARGET_OS_IPHONE
 	#define SCNetworkReachabilityFlags SCNetworkConnectionFlags
 	#define kSCNetworkReachabilityFlagsConnectionRequired kSCNetworkFlagsConnectionRequired
 	#define kSCNetworkReachabilityFlagsReachable kSCNetworkFlagsReachable
