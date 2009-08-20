@@ -27,6 +27,18 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
+#if !defined(NS_INLINE)
+#if defined(__GNUC__)
+#define NS_INLINE static __inline__ __attribute__((always_inline))
+#elif defined(__MWERKS__) || defined(__cplusplus)
+#define NS_INLINE static inline
+#elif defined(_MSC_VER)
+#define NS_INLINE static __inline
+#elif defined(__WIN32__)
+#define NS_INLINE static __inline__
+#endif
+#endif
+
 NS_INLINE NSString *OFMD5HexStringFromNSString(NSString *inStr)
 {
     const char *data = [inStr UTF8String];
@@ -53,7 +65,7 @@ NS_INLINE NSString *OFEscapedURLStringFromNSString(NSString *inStr)
 	CFStringRef escaped = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)inStr, NULL, CFSTR("&"), kCFStringEncodingUTF8);
 
     #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4	
-	return (NSString *)[escaped autorelease];			    
+	return (NSString *)[(NSString*)escaped autorelease];			    
     #else
 	return (NSString *)[NSMakeCollectable(escaped) autorelease];			    
 	#endif
@@ -64,5 +76,10 @@ NS_INLINE NSString *OFGenerateUUIDString()
     CFUUIDRef uuid = CFUUIDCreate(NULL);
     CFStringRef uuidStr = CFUUIDCreateString(NULL, uuid);
     CFRelease(uuid);
-    return [NSMakeCollectable(uuidStr) autorelease];
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4	
+	return (NSString *)[(NSString*)uuidStr autorelease];			    
+#else
+	return (NSString *)[NSMakeCollectable(uuidStr) autorelease];			    
+#endif	
 }

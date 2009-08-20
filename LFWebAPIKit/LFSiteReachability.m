@@ -224,7 +224,11 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 	[siteRequest setTimeoutInterval:inInterval];
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+- (void)httpRequest:(LFHTTPRequest *)request didReceiveStatusCode:(int)statusCode URL:(NSURL *)url responseHeader:(CFHTTPMessageRef)header
+#else
 - (void)httpRequest:(LFHTTPRequest *)request didReceiveStatusCode:(NSUInteger)statusCode URL:(NSURL *)url responseHeader:(CFHTTPMessageRef)header
+#endif
 {
 	LFSRDebug(@"%s, code: %d, URL: %@, header: %@", __PRETTY_FUNCTION__, statusCode, url, (id)header);
 }
@@ -253,8 +257,21 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 	}
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+- (id<LFSiteReachabilityDelegate>)delegate
+{
+	return delegate;
+}
+
+- (NSURL*)siteURL
+{
+	return [[siteURL retain] autorelease];
+}
+
+#else
 @synthesize delegate;
 @synthesize siteURL;
+#endif
 @end
 
 

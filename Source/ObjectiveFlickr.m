@@ -443,9 +443,14 @@ typedef unsigned int NSUInteger;
     NSAssert([outputStream write:(uint8_t *)UTF8String maxLength:writeLength] == writeLength, @"Must write multipartBegin");
     [outputStream close];
     
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+    NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:uploadTempFilename traverseLink:YES];
+    NSAssert(fileInfo, @"Must have upload temp file");
+#else
     NSError *error = nil;
     NSDictionary *fileInfo = [[NSFileManager defaultManager] attributesOfItemAtPath:uploadTempFilename error:&error];
     NSAssert(fileInfo && !error, @"Must have upload temp file");
+#endif
     NSNumber *fileSizeNumber = [fileInfo objectForKey:NSFileSize];
     NSUInteger fileSize = 0;
 
@@ -534,8 +539,12 @@ typedef unsigned int NSUInteger;
     if (uploadTempFilename) {
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:uploadTempFilename]) {
-            NSError *error = nil;
-            NSAssert([fileManager removeItemAtPath:uploadTempFilename error:&error], @"Should be able to remove temp file");
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
+            NSAssert([fileManager removeFileAtPath:uploadTempFilename handler:nil], @"Should be able to remove temp file");
+#else
+			NSError *error = nil;
+			NSAssert([fileManager removeItemAtPath:uploadTempFilename error:&error], @"Should be able to remove temp file");
+#endif
         }
         
         [uploadTempFilename release];
