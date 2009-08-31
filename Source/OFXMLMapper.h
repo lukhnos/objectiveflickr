@@ -29,7 +29,11 @@
 
 extern NSString *const OFXMLTextContentKey;
 
+#if MAC_OS_X_VERSION_10_6 && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
+@interface OFXMLMapper : NSObject <NSXMLParserDelegate>
+#else
 @interface OFXMLMapper : NSObject
+#endif
 {
     NSMutableDictionary *resultantDictionary;
 	

@@ -407,7 +407,8 @@ typedef unsigned int NSUInteger;
     
     // now we have everything, create a temp file for this purpose; although UUID is inferior to 
     [self cleanUpTempFile];
-    uploadTempFilename = [[NSTemporaryDirectory() stringByAppendingFormat:[NSString stringWithFormat:@"%@.%@", OFFlickrUploadTempFilenamePrefix, OFGenerateUUIDString()]] retain];
+	
+    uploadTempFilename = [[NSTemporaryDirectory() stringByAppendingFormat:@"%@.%@", OFFlickrUploadTempFilenamePrefix, OFGenerateUUIDString()] retain];
     
     // create the write stream
     NSOutputStream *outputStream = [NSOutputStream outputStreamToFileAtPath:uploadTempFilename append:NO];
