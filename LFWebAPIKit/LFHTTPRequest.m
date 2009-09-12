@@ -666,6 +666,12 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 {
     return [[_receivedData retain] autorelease];
 }
+
+- (NSString *)receivedContentType
+{
+	return [[_receivedContentType copy] autorelease];
+}
+
 - (NSUInteger)expectedDataLength
 {
     return _expectedDataLength;

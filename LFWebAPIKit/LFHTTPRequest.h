@@ -107,6 +107,7 @@ extern NSString *const LFHTTPRequestPOSTMethod;
 - (NSString *)contentType;
 - (void)setContentType:(NSString *)contentType;
 - (NSData *)receivedData;
+- (NSString *)receivedContentType;
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
 - (NSUInteger)expectedDataLength;
 #else
@@ -124,6 +125,7 @@ extern NSString *const LFHTTPRequestPOSTMethod;
 @property (copy) NSString *userAgent;
 @property (copy) NSString *contentType;
 @property (readonly) NSData *receivedData;
+@property (readonly) NSString *receivedContentType;
 @property (readonly) NSUInteger expectedDataLength;
 @property (assign) id delegate;
 @property (retain) id sessionInfo;
