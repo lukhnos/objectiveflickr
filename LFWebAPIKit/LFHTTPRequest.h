@@ -76,8 +76,9 @@ extern NSString *const LFHTTPRequestPOSTMethod;
     size_t _readBufferSize;
     
     id _sessionInfo;
-    
+
     BOOL _shouldWaitUntilDone;
+	NSMessagePort *_synchronousMessagePort;
 }
 
 - (id)init;

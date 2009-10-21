@@ -128,6 +128,12 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 
 - (void)handleTimeout
 {
+	if (_shouldWaitUntilDone) {
+		NSPortMessage *message = [[[NSPortMessage alloc] initWithSendPort:_synchronousMessagePort receivePort:_synchronousMessagePort components:nil] autorelease];
+		[message setMsgid:0];
+		[message sendBeforeDate:[NSDate date]];
+	}
+
     [self cleanUp];
     if ([_delegate respondsToSelector:@selector(httpRequest:didFailWithError:)]) {
         [_delegate httpRequest:self didFailWithError:LFHTTPRequestTimeoutError];
@@ -568,12 +574,21 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 		if (![currentMode length]) {
 			currentMode = NSDefaultRunLoopMode;
 		}
-		
+
+		NSAssert(!_synchronousMessagePort, @"_synchronousMessagePort should be nil when this part of code is entered");
+		_synchronousMessagePort = [[NSPort port] retain];
+
+		[currentRunLoop addPort:_synchronousMessagePort forMode:currentMode];
+
         while ([self isRunning]) {
             [currentRunLoop runMode:currentMode beforeDate:[NSDate distantFuture]];
         }
-    }    
-    
+
+		[currentRunLoop removePort:_synchronousMessagePort forMode:currentMode];
+		[_synchronousMessagePort release];
+		_synchronousMessagePort = nil;
+    }
+
     return YES;
 }
 
