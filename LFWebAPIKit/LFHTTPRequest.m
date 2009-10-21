@@ -123,15 +123,21 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
         _readBuffer = NULL;
     }
     
-    [super finalize];    
+    [super finalize];
+}
+
+
+- (void)_exitRunLoop
+{
+	NSPortMessage *message = [[[NSPortMessage alloc] initWithSendPort:_synchronousMessagePort receivePort:_synchronousMessagePort components:nil] autorelease];
+	[message setMsgid:0];
+	[message sendBeforeDate:[NSDate date]];
 }
 
 - (void)handleTimeout
 {
 	if (_shouldWaitUntilDone) {
-		NSPortMessage *message = [[[NSPortMessage alloc] initWithSendPort:_synchronousMessagePort receivePort:_synchronousMessagePort components:nil] autorelease];
-		[message setMsgid:0];
-		[message sendBeforeDate:[NSDate date]];
+		[self _exitRunLoop];
 	}
 
     [self cleanUp];
@@ -575,18 +581,26 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 			currentMode = NSDefaultRunLoopMode;
 		}
 
-		NSAssert(!_synchronousMessagePort, @"_synchronousMessagePort should be nil when this part of code is entered");
-		_synchronousMessagePort = [[NSPort port] retain];
+		BOOL isReentrant = (_synchronousMessagePort != nil);
 
-		[currentRunLoop addPort:_synchronousMessagePort forMode:currentMode];
+		if (!isReentrant) {
+			_synchronousMessagePort = [[NSPort port] retain];
+			[currentRunLoop addPort:_synchronousMessagePort forMode:currentMode];
+		}
 
         while ([self isRunning]) {
             [currentRunLoop runMode:currentMode beforeDate:[NSDate distantFuture]];
         }
 
-		[currentRunLoop removePort:_synchronousMessagePort forMode:currentMode];
-		[_synchronousMessagePort release];
-		_synchronousMessagePort = nil;
+		if (!isReentrant) {
+			[currentRunLoop removePort:_synchronousMessagePort forMode:currentMode];
+			[_synchronousMessagePort release];
+			_synchronousMessagePort = nil;
+		}
+		else {
+			// sends another message to exit the runloop
+			[self _exitRunLoop];
+		}
     }
 
     return YES;
