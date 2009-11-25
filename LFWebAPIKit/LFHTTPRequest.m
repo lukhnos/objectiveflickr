@@ -326,7 +326,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     }
 
 	// if no byte read, we need to present the header at least again, because readStreamHasBytesAvailable is never called
-	if (![_receivedData length]) {
+	if (![_receivedData length] && ![_delegate respondsToSelector:@selector(httpRequest:writeReceivedBytes:size:expectedTotal:)]) {
 		if ([_delegate respondsToSelector:@selector(httpRequest:sentBytes:total:)]) {
 			[_delegate httpRequest:self sentBytes:_lastSentBytes total:_lastSentBytes];
 		}
