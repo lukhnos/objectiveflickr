@@ -41,12 +41,12 @@
         [combinedDataString appendString:[NSString stringWithFormat:@"%@=%@", [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], [value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 
 		while ((key = [enumerator nextObject])) {
-			value = [formDictionary objectForKey:key];        
+			value = [formDictionary objectForKey:key];
 			[combinedDataString appendString:[NSString stringWithFormat:@"&%@=%@", [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], [value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
-		}    		
+		}
 	}
 
 
-    return [combinedDataString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];    
+    return [combinedDataString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
 }
 @end
