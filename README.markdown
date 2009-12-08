@@ -283,7 +283,7 @@ To map that into your app's internal workings, you need to do these:
 7. Assign the auth token to your current Flickr API context with
    `-[OFFlickrAPIContext setAuthToken:]`
 8. That's it. ObjectiveFlickr will add the `auth_token` argument to all 
-   your subsequent API calls, and you know have the access to all the APIs
+   your subsequent API calls, and you now have the access to all the APIs
    to which the user has grant you permission.
 
 
