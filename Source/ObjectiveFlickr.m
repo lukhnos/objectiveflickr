@@ -77,7 +77,7 @@ typedef unsigned int NSUInteger;
 
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         key = [inKey copy];
         sharedSecret = [inSharedSecret copy];
         
@@ -239,7 +239,7 @@ typedef unsigned int NSUInteger;
 	NSArray *sortedArgs = [[newArgs allKeys] sortedArrayUsingSelector:@selector(compare:)];
 	NSEnumerator *argEnumerator = [sortedArgs objectEnumerator];
 	NSString *nextKey;
-	while (nextKey = [argEnumerator nextObject]) {
+	while ((nextKey = [argEnumerator nextObject])) {
 		NSString *value = [newArgs objectForKey:nextKey];
 		[sigString appendFormat:@"%@%@", nextKey, value];
 		[argArray addObject:[NSArray arrayWithObjects:nextKey, (inUseEscape ? OFEscapedURLStringFromNSString(value) : value), nil]];
@@ -257,7 +257,7 @@ typedef unsigned int NSUInteger;
     NSMutableArray *args = [NSMutableArray array];
     NSEnumerator *componentEnumerator = [argComponents objectEnumerator];
     NSArray *nextArg;
-    while (nextArg = [componentEnumerator nextObject]) {
+    while ((nextArg = [componentEnumerator nextObject])) {
         [args addObject:[nextArg componentsJoinedByString:@"="]];
     }
     
@@ -283,7 +283,7 @@ typedef unsigned int NSUInteger;
 
 - (id)initWithAPIContext:(OFFlickrAPIContext *)inContext
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         context = [inContext retain];
         
         HTTPRequest = [[LFHTTPRequest alloc] init];
@@ -394,7 +394,7 @@ typedef unsigned int NSUInteger;
     
     NSEnumerator *componentEnumerator = [argComponents objectEnumerator];
     NSArray *nextArgComponent;
-    while (nextArgComponent = [componentEnumerator nextObject]) {        
+    while ((nextArgComponent = [componentEnumerator nextObject])) {        
         [multipartBegin appendFormat:@"--%@\r\nContent-Disposition: form-data; name=\"%@\"\r\n\r\n%@\r\n", separator, [nextArgComponent objectAtIndex:0], [nextArgComponent objectAtIndex:1]];
     }
 

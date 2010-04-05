@@ -41,7 +41,7 @@ NSString *const OFXMLTextContentKey = @"_text";
 
 - (id)init
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         resultantDictionary = [[NSMutableDictionary alloc] init];
 		elementStack = [[NSMutableArray alloc] init];
     }
@@ -78,8 +78,8 @@ NSString *const OFXMLTextContentKey = @"_text";
 	NSMutableDictionary *mutableAttrDict = attributeDict ? [NSMutableDictionary dictionaryWithDictionary:attributeDict] : [NSMutableDictionary dictionary];
 
 	// see if it's duplicated
-	id element;
-	if (element = [currentDictionary objectForKey:elementName]) {
+	id element = [currentDictionary objectForKey:elementName];
+	if (element) {
 		if (![element isKindOfClass:[NSMutableArray class]]) {
 			if ([element isKindOfClass:[NSMutableDictionary class]]) {
 				[element retain];

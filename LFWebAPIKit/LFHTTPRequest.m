@@ -408,7 +408,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 @implementation LFHTTPRequest
 - (id)init
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _timeoutInterval = LFHTTPRequestDefaultTimeoutInterval;
 
         _receivedData = [NSMutableData new];
@@ -477,7 +477,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 
     NSEnumerator *dictEnumerator = [headerDictionary keyEnumerator];
     id key;
-    while (key = [dictEnumerator nextObject]) {
+    while ((key = [dictEnumerator nextObject])) {
         CFHTTPMessageSetHeaderFieldValue(request, (CFStringRef)[key description], (CFStringRef)[headerDictionary objectForKey:key]);
     }
 

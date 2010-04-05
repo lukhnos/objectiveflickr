@@ -70,7 +70,7 @@ static void LFSiteReachabilityCallback(SCNetworkReachabilityRef inTarget, SCNetw
 
 - (id)init
 {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		siteRequest = [[LFHTTPRequest alloc] init];
 		[siteRequest setDelegate:self];
 		[siteRequest setTimeoutInterval:kDefaultTimeoutInterval];
