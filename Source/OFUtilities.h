@@ -42,7 +42,7 @@
 NS_INLINE NSString *OFMD5HexStringFromNSString(NSString *inStr)
 {
     const char *data = [inStr UTF8String];
-    size_t length = strlen(data);
+    CC_LONG length = (CC_LONG) strlen(data);
     
     unsigned char *md5buf = (unsigned char*)calloc(1, CC_MD5_DIGEST_LENGTH);
  
