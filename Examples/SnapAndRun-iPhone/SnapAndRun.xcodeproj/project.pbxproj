@@ -264,6 +264,7 @@
 				);
 				INFOPLIST_FILE = "SnapAndRun-Info.plist";
 				PRODUCT_NAME = SnapAndRun;
+				SDKROOT = iphoneos3.1.3;
 			};
 			name = Debug;
 		};
@@ -280,6 +281,7 @@
 				);
 				INFOPLIST_FILE = "SnapAndRun-Info.plist";
 				PRODUCT_NAME = SnapAndRun;
+				SDKROOT = iphoneos3.1.3;
 			};
 			name = Release;
 		};
