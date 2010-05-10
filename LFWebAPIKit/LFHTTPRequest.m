@@ -502,15 +502,11 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     CFReadStreamSetProperty(tmpReadStream, kCFStreamPropertyHTTPShouldAutoredirect, kCFBooleanTrue);
 
     // apply current proxy settings
-    #if !TARGET_OS_IPHONE
-        CFDictionaryRef proxyDict = SCDynamicStoreCopyProxies(NULL); // kCFNetworkProxiesHTTPProxy
-    #else
-        #if TARGET_IPHONE_SIMULATOR
-            CFDictionaryRef proxyDict = (CFDictionaryRef)[[NSDictionary alloc] init];
-        #else
-            CFDictionaryRef proxyDict = CFNetworkCopySystemProxySettings();
-        #endif
-    #endif
+	#if !TARGET_OS_IPHONE
+		CFDictionaryRef proxyDict = SCDynamicStoreCopyProxies(NULL); // kCFNetworkProxiesHTTPProxy
+	#else
+		CFDictionaryRef proxyDict = CFNetworkCopySystemProxySettings();
+	#endif	
 
     if (proxyDict) {
         CFReadStreamSetProperty(tmpReadStream, kCFStreamPropertyHTTPProxy, proxyDict);
