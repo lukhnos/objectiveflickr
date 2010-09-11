@@ -29,7 +29,7 @@
 
 extern NSString *const OFXMLTextContentKey;
 
-#if MAC_OS_X_VERSION_10_6 && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
+#if (MAC_OS_X_VERSION_10_6 && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6) || (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_2_0)
 @interface OFXMLMapper : NSObject <NSXMLParserDelegate>
 #else
 @interface OFXMLMapper : NSObject
