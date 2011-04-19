@@ -4,3 +4,5 @@ build
 *.tm_build_errors
 .DS_Store
 SampleAPIKey.h
+xcuserdata
+*.xcworkspace
