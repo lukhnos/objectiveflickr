@@ -311,6 +311,10 @@ typedef unsigned int NSUInteger;
     [newArgs setObject:@"HMAC-SHA1" forKey:@"oauth_signature_method"];
     [newArgs setObject:key forKey:@"oauth_consumer_key"];
     
+    if (![inArguments objectForKey:@"oauth_token"] && oauthToken) {
+        [newArgs setObject:oauthToken forKey:@"oauth_token"];
+    }
+    
     NSString *signatureKey = nil;
     if (oauthTokenSecret) {
         signatureKey = [NSString stringWithFormat:@"%@&%@", sharedSecret, oauthTokenSecret];
@@ -462,11 +466,22 @@ typedef unsigned int NSUInteger;
     // combine the parameters 
 	NSMutableDictionary *newArgs = inArguments ? [NSMutableDictionary dictionaryWithDictionary:inArguments] : [NSMutableDictionary dictionary];
 	[newArgs setObject:inMethodName forKey:@"method"];	
-	NSString *query = [context signedQueryFromArguments:newArgs];
-	NSString *URLString = [NSString stringWithFormat:@"%@?%@", [context RESTAPIEndpoint], query];
-	
-    [HTTPRequest setContentType:nil];
-	return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:[NSURL URLWithString:URLString] withData:nil];
+
+    NSURL *requestURL = nil;
+    if ([context OAuthToken] && [context OAuthTokenSecret]) {
+        requestURL = [context oauthURLFromBaseURL:[NSURL URLWithString:[context RESTAPIEndpoint]] method:LFHTTPRequestGETMethod arguments:newArgs];
+    }
+    else {
+        NSString *query = [context signedQueryFromArguments:newArgs];
+        NSString *URLString = [NSString stringWithFormat:@"%@?%@", [context RESTAPIEndpoint], query];
+        requestURL = [NSURL URLWithString:URLString];
+    }
+    
+    if (requestURL) {
+        [HTTPRequest setContentType:nil];
+        return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:requestURL withData:nil];        
+    }
+    return NO;
 }
 
 - (BOOL)callAPIMethodWithPOST:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
@@ -618,7 +633,6 @@ typedef unsigned int NSUInteger;
 
         NSString *response = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
         NSDictionary *params = OFExtractURLQueryParameter(response);
-        
         
         NSString *fn = [params objectForKey:@"fullname"];
         NSString *oat = [params objectForKey:@"oauth_token"];
