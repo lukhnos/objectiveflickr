@@ -263,6 +263,56 @@ typedef unsigned int NSUInteger;
     
     return [args componentsJoinedByString:@"&"];
 }
+
+- (NSURL *)oauthURLFromBaseURL:(NSURL *)inURL method:(NSString *)inMethod arguments:(NSDictionary *)inArguments;
+{
+    NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
+    [newArgs setObject:[OFGenerateUUIDString() substringToIndex:8] forKey:@"oauth_nonce"];
+    [newArgs setObject:[NSString stringWithFormat:@"%lu", (long)[[NSDate date] timeIntervalSince1970]] forKey:@"oauth_timestamp"];
+    [newArgs setObject:@"1.0" forKey:@"oauth_version"];
+    [newArgs setObject:@"HMAC-SHA1" forKey:@"oauth_signature_method"];
+    [newArgs setObject:key forKey:@"oauth_consumer_key"];
+    
+    NSString *signatureKey = nil;
+    if (oauthTokenSecret) {
+        signatureKey = [NSString stringWithFormat:@"%@&%@", sharedSecret, oauthTokenSecret];
+    }
+    else {
+        signatureKey = [NSString stringWithFormat:@"%@&", sharedSecret];
+    }
+    
+    NSMutableString *baseString = [NSMutableString string];
+    [baseString appendString:inMethod];
+    [baseString appendString:@"&"];
+    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([inURL absoluteString], @"&/:=?")];
+    
+    NSLog(@"new args: %@", newArgs);
+    
+    NSArray *sortedArgKeys = [[newArgs allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    [baseString appendString:@"&"];
+    
+    NSMutableArray *baseStrArgs = [NSMutableArray array];
+    
+    for (NSString *k in sortedArgKeys) {
+        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], @"&/:=?")]];
+    }
+    
+    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], @"&/:=?")];
+    
+    NSString *signature = OFHMACSha1Base64(signatureKey, baseString);
+
+    [newArgs setObject:signature forKey:@"oauth_signature"];
+    
+    NSMutableArray *queryArray = [NSMutableArray array];
+    
+    for (NSString *k in [newArgs allKeys]) {
+        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSString([newArgs objectForKey:k])]];
+    }
+    
+    
+    NSString *newURLStringWithQuery = [NSString stringWithFormat:@"%@?%@", [inURL absoluteString], [queryArray componentsJoinedByString:@"&"]];
+    return [NSURL URLWithString:newURLStringWithQuery];
+}
 @end
 
 @interface OFFlickrAPIRequest (PrivateMethods)
@@ -340,6 +390,19 @@ typedef unsigned int NSUInteger;
     [HTTPRequest cancelWithoutDelegateMessage];
     [self cleanUpTempFile];
 }
+
+- (BOOL)requestOAuthTokenWithCallbackURL:(NSURL *)inCallbackURL
+{
+    if ([HTTPRequest isRunning]) {
+        return NO;
+    }
+
+    NSDictionary *paramsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[inCallbackURL absoluteString], @"oauth_callback", nil];
+    NSURL *requestURL = [context oauthURLFromBaseURL:[NSURL URLWithString:@"http://www.flickr.com/services/oauth/request_token"] method:LFHTTPRequestGETMethod arguments:paramsDictionary];
+    [HTTPRequest setContentType:nil];
+    return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:requestURL withData:nil];
+}
+
 
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
 {
@@ -482,6 +545,12 @@ typedef unsigned int NSUInteger;
 #pragma mark LFHTTPRequest delegate methods
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request
 {
+    NSString *dumpString = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
+    NSLog(@"Received response: %@", dumpString);
+    
+#warning not doing much here
+    return;
+    
 	NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	
 	NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
 	NSString *stat = [rsp objectForKey:@"stat"];

@@ -29,4 +29,8 @@
 
 NSString *OFMD5HexStringFromNSString(NSString *inStr);
 NSString *OFEscapedURLStringFromNSString(NSString *inStr);
+NSString *OFEscapedURLStringFromNSStringWithExtraEscapedChars(NSString *inStr, NSString *inEscChars);
+
 NSString *OFGenerateUUIDString();
+
+NSString *OFHMACSha1Base64(NSString *inKey, NSString *inMessage);

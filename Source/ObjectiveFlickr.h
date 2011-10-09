@@ -50,6 +50,9 @@ extern NSString *const OFFlickrDeletePermission;
 	NSString *photoWebPageSource;
 	NSString *authEndpoint;
     NSString *uploadEndpoint;
+    
+    NSString *oauthToken;
+    NSString *oauthTokenSecret;
 }
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret;
 
@@ -137,6 +140,8 @@ typedef id OFFlickrAPIRequestDelegateType;
     id sessionInfo;
     
     NSString *uploadTempFilename;
+    
+    id oauthState;
 }
 - (id)initWithAPIContext:(OFFlickrAPIContext *)inContext;
 - (OFFlickrAPIContext *)context;
@@ -146,6 +151,10 @@ typedef id OFFlickrAPIRequestDelegateType;
 - (void)setRequestTimeoutInterval:(NSTimeInterval)inTimeInterval;
 - (BOOL)isRunning;
 - (void)cancel;
+
+// oauth methods
+- (BOOL)requestOAuthTokenWithCallbackURL:(NSURL *)inCallbackURL;
+
 
 // elementary methods
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments;
