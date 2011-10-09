@@ -34,3 +34,6 @@ NSString *OFEscapedURLStringFromNSStringWithExtraEscapedChars(NSString *inStr, N
 NSString *OFGenerateUUIDString();
 
 NSString *OFHMACSha1Base64(NSString *inKey, NSString *inMessage);
+NSDictionary *OFExtractURLQueryParameter(NSString *inQuery);
+BOOL OFExtractOAuthCallback(NSURL *inReceivedURL, NSURL *inBaseURL, NSString **outRequestToken, NSString **outVerifier);
+

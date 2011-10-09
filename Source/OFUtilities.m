@@ -144,6 +144,59 @@ NSString *OFHMACSha1Base64(NSString *inKey, NSString *inMessage)
 	return result;    
 }
 
+NSDictionary *OFExtractURLQueryParameter(NSString *inQuery)
+{
+    if (![inQuery length]) {
+        return nil;        
+    }
+
+    NSArray *params = [inQuery componentsSeparatedByString:@"&"];
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    for (NSString *p in params) {
+        NSArray *kv = [p componentsSeparatedByString:@"="];
+        if ([kv count] != 2) {
+            return nil;
+        }
+        
+        [dict setObject:[kv objectAtIndex:1] forKey:[kv objectAtIndex:0]];
+    }
+    return dict;
+}
+
+BOOL OFExtractOAuthCallback(NSURL *inReceivedURL, NSURL *inBaseURL, NSString **outRequestToken, NSString **outVerifier)
+{
+    assert(outRequestToken && "outRequestToken cannot be nil");
+    assert(outVerifier && "outVerifier cannot be nil");
+    
+    NSString *ruStr = [inReceivedURL absoluteString];
+    NSString *buStr = [[inBaseURL absoluteString] stringByAppendingString:@"?"];
+    
+    if (![ruStr hasPrefix:buStr]) {
+        return NO;
+    }
+    
+    NSString *query = [ruStr substringFromIndex:[buStr length]];
+    if (![query length]) {
+        return NO;
+    }
+    
+    NSDictionary *dict = OFExtractURLQueryParameter(query);
+    if (!dict) {
+        return NO;
+    }
+    
+    NSString *t = [dict objectForKey:@"oauth_token"];
+    NSString *v = [dict objectForKey:@"oauth_verifier"];
+    
+    if (!t || !v) {
+        return NO;
+    }
+    
+    *outRequestToken = [[t copy] autorelease];
+    *outVerifier = [[v copy] autorelease];
+    return YES;
+}
 
 
 
@@ -175,36 +228,8 @@ NSString *OFHMACSha1Base64(NSString *inKey, NSString *inMessage)
 //
 // Mapping from 6 bit pattern to ASCII character.
 //
-static unsigned char base64EncodeLookup[65] =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static unsigned char base64EncodeLookup[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-//
-// Definition for "masked-out" areas of the base64DecodeLookup mapping
-//
-#define xx 65
-
-//
-// Mapping from ASCII character to 6 bit pattern.
-//
-static unsigned char base64DecodeLookup[256] =
-{
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 62, xx, xx, xx, 63, 
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, xx, xx, xx, xx, xx, xx, 
-    xx,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, xx, xx, xx, xx, xx, 
-    xx, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-    xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, xx, 
-};
 
 //
 // Fundamental sizes of the binary and base64 encode/decode units in bytes

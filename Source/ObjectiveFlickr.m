@@ -43,6 +43,11 @@ NSString *const OFFlickrUploadTempFilenamePrefix = @"org.lukhnos.ObjectiveFlickr
 NSString *const OFFlickrAPIReturnedErrorDomain = @"com.flickr";
 NSString *const OFFlickrAPIRequestErrorDomain = @"org.lukhnos.ObjectiveFlickr";
 
+NSString *const OFFlickrAPIRequestOAuthErrorUserInfoKey = @"OAuthError";
+NSString *const OFFetchOAuthRequestTokenSession = @"FetchOAuthRequestToken";
+NSString *const OFFetchOAuthAccessTokenSession = @"FetchOAuthAccessToken";
+
+
 // compatibility typedefs
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 typedef unsigned int NSUInteger;
@@ -100,6 +105,12 @@ typedef unsigned int NSUInteger;
 - (NSString *)authToken
 {
     return authToken;
+}
+
+- (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken
+{
+    NSString *URLString = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@", inRequestToken];
+    return [NSURL URLWithString:URLString];
 }
 
 - (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier
@@ -395,7 +406,7 @@ typedef unsigned int NSUInteger;
     [self cleanUpTempFile];
 }
 
-- (BOOL)requestOAuthTokenWithCallbackURL:(NSURL *)inCallbackURL
+- (BOOL)fetchOAuthRequestTokenWithCallbackURL:(NSURL *)inCallbackURL
 {
     if ([HTTPRequest isRunning]) {
         return NO;
@@ -403,10 +414,22 @@ typedef unsigned int NSUInteger;
 
     NSDictionary *paramsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[inCallbackURL absoluteString], @"oauth_callback", nil];
     NSURL *requestURL = [context oauthURLFromBaseURL:[NSURL URLWithString:@"http://www.flickr.com/services/oauth/request_token"] method:LFHTTPRequestGETMethod arguments:paramsDictionary];
+    [HTTPRequest setSessionInfo:OFFetchOAuthRequestTokenSession];
     [HTTPRequest setContentType:nil];
     return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:requestURL withData:nil];
 }
 
+- (BOOL)fetchOAuthAccessTokenWithRequestToken:(NSString *)inRequestToken verifier:(NSString *)inVerifier
+{
+    if ([HTTPRequest isRunning]) {
+        return NO;
+    }
+    NSDictionary *paramsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:inRequestToken, @"oauth_token", inVerifier, @"oauth_verifier", nil];
+    NSURL *requestURL = [context oauthURLFromBaseURL:[NSURL URLWithString:@"http://www.flickr.com/services/oauth/access_token"] method:LFHTTPRequestGETMethod arguments:paramsDictionary];
+    [HTTPRequest setSessionInfo:OFFetchOAuthAccessTokenSession];
+    [HTTPRequest setContentType:nil];
+    return [HTTPRequest performMethod:LFHTTPRequestGETMethod onURL:requestURL withData:nil];
+}
 
 - (BOOL)callAPIMethodWithGET:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
 {
@@ -549,41 +572,59 @@ typedef unsigned int NSUInteger;
 #pragma mark LFHTTPRequest delegate methods
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request
 {
-    NSString *dumpString = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
-    NSLog(@"Received response: %@", dumpString);
-    
-#warning not doing much here
-    return;
-    
-	NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	
-	NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
-	NSString *stat = [rsp objectForKey:@"stat"];
-	
-	// this also fails when (responseDictionary, rsp, stat) == nil, so it's a guranteed way of checking the result
-	if (![stat isEqualToString:@"ok"]) {
-		NSDictionary *err = [rsp objectForKey:@"err"];
-		NSString *code = [err objectForKey:@"code"];
-		NSString *msg = [err objectForKey:@"msg"];
-	
-		NSError *toDelegateError;
-		if ([code length]) {
-			// intValue for 10.4-compatibility
-			toDelegateError = [NSError errorWithDomain:OFFlickrAPIReturnedErrorDomain code:[code intValue] userInfo:[msg length] ? [NSDictionary dictionaryWithObjectsAndKeys:msg, NSLocalizedFailureReasonErrorKey, nil] : nil];				
-		}
-		else {
-			toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestFaultyXMLResponseError userInfo:nil];
-		}
-			
-		if ([delegate respondsToSelector:@selector(flickrAPIRequest:didFailWithError:)]) {
-			[delegate flickrAPIRequest:self didFailWithError:toDelegateError];        
-		}
-		return;
-	}
+    if ([request sessionInfo] == OFFetchOAuthRequestTokenSession) {
+        NSString *response = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
+        NSLog(@"%@ response: %@", sessionInfo, response);
 
-    [self cleanUpTempFile];
-    if ([delegate respondsToSelector:@selector(flickrAPIRequest:didCompleteWithResponse:)]) {
-		[delegate flickrAPIRequest:self didCompleteWithResponse:rsp];
-    }    
+        if (![response hasPrefix:@"oauth_callback_confirmed=true"]) {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:response, OFFlickrAPIRequestOAuthErrorUserInfoKey, nil];
+            NSError *error = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestOAuthError userInfo:userInfo];            
+            [delegate flickrAPIRequest:self didFailWithError:error];
+        }
+        else {
+            NSAssert([delegate respondsToSelector:@selector(flickrAPIRequest:didObtainOAuthRequestToken:)], @"Delegate must implement the method -flickrAPIRequest:didObtainOAuthRequestToken: to handle OAuth request token callback");
+            
+            NSDictionary *params = OFExtractURLQueryParameter(response);
+            [delegate flickrAPIRequest:self didObtainOAuthRequestToken:[params objectForKey:@"oauth_token"]];
+        }
+    }
+    else if ([request sessionInfo] == OFFetchOAuthAccessTokenSession) {
+
+        NSString *response = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
+        NSLog(@"%@ response: %@", sessionInfo, response);
+
+    }
+    else {
+        NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	
+        NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
+        NSString *stat = [rsp objectForKey:@"stat"];
+        
+        // this also fails when (responseDictionary, rsp, stat) == nil, so it's a guranteed way of checking the result
+        if (![stat isEqualToString:@"ok"]) {
+            NSDictionary *err = [rsp objectForKey:@"err"];
+            NSString *code = [err objectForKey:@"code"];
+            NSString *msg = [err objectForKey:@"msg"];
+        
+            NSError *toDelegateError;
+            if ([code length]) {
+                // intValue for 10.4-compatibility
+                toDelegateError = [NSError errorWithDomain:OFFlickrAPIReturnedErrorDomain code:[code intValue] userInfo:[msg length] ? [NSDictionary dictionaryWithObjectsAndKeys:msg, NSLocalizedFailureReasonErrorKey, nil] : nil];				
+            }
+            else {
+                toDelegateError = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestFaultyXMLResponseError userInfo:nil];
+            }
+                
+            if ([delegate respondsToSelector:@selector(flickrAPIRequest:didFailWithError:)]) {
+                [delegate flickrAPIRequest:self didFailWithError:toDelegateError];        
+            }
+            return;
+        }
+
+        [self cleanUpTempFile];
+        if ([delegate respondsToSelector:@selector(flickrAPIRequest:didCompleteWithResponse:)]) {
+            [delegate flickrAPIRequest:self didCompleteWithResponse:rsp];
+        }    
+    }
 }
 
 - (void)httpRequest:(LFHTTPRequest *)request didFailWithError:(NSString *)error

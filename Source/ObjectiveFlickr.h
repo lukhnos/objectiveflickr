@@ -56,6 +56,9 @@ extern NSString *const OFFlickrDeletePermission;
 }
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret;
 
+// OAuth URL
+- (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken;
+
 
 // URL provisioning
 - (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier;
@@ -105,8 +108,17 @@ enum {
     OFFlickrAPIRequestConnectionError = 0x7fff0001,
     OFFlickrAPIRequestTimeoutError = 0x7fff0002,    
 	OFFlickrAPIRequestFaultyXMLResponseError = 0x7fff0003,
-    OFFlickrAPIRequestUnknownError = 0x7fff0042
+    
+    OFFlickrAPIRequestOAuthError = 0x7fff0004,
+
+    OFFlickrAPIRequestUnknownError = 0x7fff0042    
 };
+
+extern NSString *const OFFlickrAPIRequestOAuthErrorUserInfoKey;
+
+extern NSString *const OFFetchOAuthRequestTokenSession;
+extern NSString *const OFFetchOAuthAccessTokenSession;
+
 
 @class OFFlickrAPIRequest;
 
@@ -123,6 +135,10 @@ enum {
 #else
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(unsigned int)inSentBytes totalBytes:(unsigned int)inTotalBytes;
 #endif
+
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthRequestToken:(NSString *)inRequestToken;
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthAccessToken:(NSString *)inAccessToken secret:(NSString *)inSecret userFullName:(NSString *)inFullName userName:(NSString *)inUserName userNSID:(NSString *)inNSID;
+
 @end
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
@@ -153,7 +169,8 @@ typedef id OFFlickrAPIRequestDelegateType;
 - (void)cancel;
 
 // oauth methods
-- (BOOL)requestOAuthTokenWithCallbackURL:(NSURL *)inCallbackURL;
+- (BOOL)fetchOAuthRequestTokenWithCallbackURL:(NSURL *)inCallbackURL;
+- (BOOL)fetchOAuthAccessTokenWithRequestToken:(NSString *)inRequestToken verifier:(NSString *)inVerifier;
 
 
 // elementary methods
