@@ -302,7 +302,7 @@ typedef unsigned int NSUInteger;
     return [args componentsJoinedByString:@"&"];
 }
 
-- (NSURL *)oauthURLFromBaseURL:(NSURL *)inURL method:(NSString *)inMethod arguments:(NSDictionary *)inArguments;
+- (NSDictionary *)signedOAuthHTTPQueryArguments:(NSDictionary *)inArguments baseURL:(NSURL *)inURL method:(NSString *)inMethod
 {
     NSMutableDictionary *newArgs = [NSMutableDictionary dictionaryWithDictionary:inArguments];
     [newArgs setObject:[OFGenerateUUIDString() substringToIndex:8] forKey:@"oauth_nonce"];
@@ -340,9 +340,14 @@ typedef unsigned int NSUInteger;
     [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], @"&/:=?+")];
     
     NSString *signature = OFHMACSha1Base64(signatureKey, baseString);
-
-    [newArgs setObject:signature forKey:@"oauth_signature"];
     
+    [newArgs setObject:signature forKey:@"oauth_signature"];
+    return newArgs;
+}
+
+- (NSURL *)oauthURLFromBaseURL:(NSURL *)inURL method:(NSString *)inMethod arguments:(NSDictionary *)inArguments
+{
+    NSDictionary *newArgs = [self signedOAuthHTTPQueryArguments:inArguments baseURL:inURL method:inMethod];
     NSMutableArray *queryArray = [NSMutableArray array];
     
     for (NSString *k in [newArgs allKeys]) {
