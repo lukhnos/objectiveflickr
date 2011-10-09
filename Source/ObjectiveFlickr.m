@@ -324,8 +324,6 @@ typedef unsigned int NSUInteger;
     [baseString appendString:@"&"];
     [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([inURL absoluteString], @"&/:=?+")];
     
-    NSLog(@"new args: %@", newArgs);
-    
     NSArray *sortedArgKeys = [[newArgs allKeys] sortedArrayUsingSelector:@selector(compare:)];
     [baseString appendString:@"&"];
     
@@ -336,8 +334,6 @@ typedef unsigned int NSUInteger;
     }
     
     [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], @"&/:=?+")];
-    
-    NSLog(@"baseStr: %@", baseString);
     
     NSString *signature = OFHMACSha1Base64(signatureKey, baseString);
 
@@ -351,7 +347,6 @@ typedef unsigned int NSUInteger;
     
     
     NSString *newURLStringWithQuery = [NSString stringWithFormat:@"%@?%@", [inURL absoluteString], [queryArray componentsJoinedByString:@"&"]];
-    NSLog(@"URL: %@", newURLStringWithQuery);
     
     return [NSURL URLWithString:newURLStringWithQuery];
 }
