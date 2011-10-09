@@ -128,7 +128,7 @@ NSString *kCheckTokenStep = @"kCheckTokenStep";
         flickrContext = [[OFFlickrAPIContext alloc] initWithAPIKey:OBJECTIVE_FLICKR_SAMPLE_API_KEY sharedSecret:OBJECTIVE_FLICKR_SAMPLE_API_SHARED_SECRET];
         
         NSString *authToken;
-        if (authToken = [[NSUserDefaults standardUserDefaults] objectForKey:kStoredAuthTokenKeyName]) {
+        if ((authToken = [[NSUserDefaults standardUserDefaults] objectForKey:kStoredAuthTokenKeyName])) {
             flickrContext.authToken = authToken;
         }
     }
