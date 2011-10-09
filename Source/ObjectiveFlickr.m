@@ -77,6 +77,9 @@ typedef unsigned int NSUInteger;
 	[authEndpoint release];
     [uploadEndpoint release];
     
+    [oauthToken release];
+    [oauthTokenSecret release];
+    
     [super dealloc];
 }
 
@@ -224,6 +227,30 @@ typedef unsigned int NSUInteger;
 - (NSString *)uploadEndpoint
 {
     return uploadEndpoint;
+}
+
+- (void)setOAuthToken:(NSString *)inToken
+{
+    NSString *tmp = oauthToken;
+    oauthToken = [inToken copy];
+    [tmp release];    
+}
+
+- (NSString *)OAuthToken
+{
+    return oauthToken;
+}
+
+- (void)setOAuthTokenSecret:(NSString *)inSecret;
+{
+    NSString *tmp = oauthTokenSecret;
+    oauthTokenSecret = [inSecret copy];
+    [tmp release];    
+}
+
+- (NSString *)OAuthTokenSecret
+{
+    return oauthTokenSecret;
 }
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
@@ -573,26 +600,47 @@ typedef unsigned int NSUInteger;
 - (void)httpRequestDidComplete:(LFHTTPRequest *)request
 {
     if ([request sessionInfo] == OFFetchOAuthRequestTokenSession) {
+        [request setSessionInfo:nil];
+        
         NSString *response = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
-        NSLog(@"%@ response: %@", sessionInfo, response);
 
-        if (![response hasPrefix:@"oauth_callback_confirmed=true"]) {
+        NSDictionary *params = OFExtractURLQueryParameter(response);
+        NSString *oat = [params objectForKey:@"oauth_token"];
+        NSString *oats = [params objectForKey:@"oauth_token_secret"];
+        if (!oat || !oats) {
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:response, OFFlickrAPIRequestOAuthErrorUserInfoKey, nil];
             NSError *error = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestOAuthError userInfo:userInfo];            
-            [delegate flickrAPIRequest:self didFailWithError:error];
+            [delegate flickrAPIRequest:self didFailWithError:error];                
         }
         else {
-            NSAssert([delegate respondsToSelector:@selector(flickrAPIRequest:didObtainOAuthRequestToken:)], @"Delegate must implement the method -flickrAPIRequest:didObtainOAuthRequestToken: to handle OAuth request token callback");
+            NSAssert([delegate respondsToSelector:@selector(flickrAPIRequest:didObtainOAuthRequestToken:secret:)], @"Delegate must implement the method -flickrAPIRequest:didObtainOAuthRequestToken:secret: to handle OAuth request token callback");
             
-            NSDictionary *params = OFExtractURLQueryParameter(response);
-            [delegate flickrAPIRequest:self didObtainOAuthRequestToken:[params objectForKey:@"oauth_token"]];
+            [delegate flickrAPIRequest:self didObtainOAuthRequestToken:oat secret:oats];
         }
     }
     else if ([request sessionInfo] == OFFetchOAuthAccessTokenSession) {
+        [request setSessionInfo:nil];
 
         NSString *response = [[[NSString alloc] initWithData:[request receivedData] encoding:NSUTF8StringEncoding] autorelease];
-        NSLog(@"%@ response: %@", sessionInfo, response);
-
+        NSDictionary *params = OFExtractURLQueryParameter(response);
+        
+        
+        NSString *fn = [params objectForKey:@"fullname"];
+        NSString *oat = [params objectForKey:@"oauth_token"];
+        NSString *oats = [params objectForKey:@"oauth_token_secret"];
+        NSString *nsid = [params objectForKey:@"user_nsid"];
+        NSString *un = [params objectForKey:@"username"];
+        if (!fn || !oat || !oats || !nsid || !un) {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:response, OFFlickrAPIRequestOAuthErrorUserInfoKey, nil];
+            NSError *error = [NSError errorWithDomain:OFFlickrAPIRequestErrorDomain code:OFFlickrAPIRequestOAuthError userInfo:userInfo];            
+            [delegate flickrAPIRequest:self didFailWithError:error];            
+        }
+        
+        else {
+            NSAssert([delegate respondsToSelector:@selector(flickrAPIRequest:didObtainOAuthAccessToken:secret:userFullName:userName:userNSID:)], @"Delegate must implement -flickrAPIRequest:didObtainOAuthAccessToken:secret:userFullName:userName:userNSID: to handle the obtained access token");
+            
+            [delegate flickrAPIRequest:self didObtainOAuthAccessToken:oat secret:oats userFullName:fn userName:un userNSID:nsid];
+        }
     }
     else {
         NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	

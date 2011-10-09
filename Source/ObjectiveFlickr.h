@@ -77,6 +77,9 @@ extern NSString *const OFFlickrDeletePermission;
 @property (nonatomic, retain) NSString *photoWebPageSource;
 @property (nonatomic, retain) NSString *authEndpoint;
 @property (nonatomic, retain) NSString *uploadEndpoint;
+
+@property (nonatomic, retain) NSString *OAuthToken;
+@property (nonatomic, retain) NSString *OAuthTokenSecret;
 #else
 
 - (void)setAuthToken:(NSString *)inAuthToken;
@@ -95,6 +98,11 @@ extern NSString *const OFFlickrDeletePermission;
 - (void)setUploadEndpoint:(NSString *)inEndpoint;
 - (NSString *)uploadEndpoint;
 
+- (void)setOAuthToken:(NSString *)inToken;
+- (NSString *)OAuthToken;
+
+- (void)setOAuthTokenSecret:(NSString *)inTokenSecret;
+- (NSString *)OAuthTokenSecret;
 
 
 #endif
@@ -136,7 +144,7 @@ extern NSString *const OFFetchOAuthAccessTokenSession;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(unsigned int)inSentBytes totalBytes:(unsigned int)inTotalBytes;
 #endif
 
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthRequestToken:(NSString *)inRequestToken;
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthRequestToken:(NSString *)inRequestToken secret:(NSString *)inSecret;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthAccessToken:(NSString *)inAccessToken secret:(NSString *)inSecret userFullName:(NSString *)inFullName userName:(NSString *)inUserName userNSID:(NSString *)inNSID;
 
 @end
