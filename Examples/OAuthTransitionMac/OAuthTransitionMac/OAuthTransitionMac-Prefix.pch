@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'OAuthTransitionMac' target in the 'OAuthTransitionMac' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

@@ -1,0 +1,382 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6A61B53D1441E29800F5F66C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A61B53C1441E29800F5F66C /* Cocoa.framework */; };
+		6A61B5471441E29800F5F66C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A61B5451441E29800F5F66C /* InfoPlist.strings */; };
+		6A61B5491441E29800F5F66C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A61B5481441E29800F5F66C /* main.m */; };
+		6A61B54D1441E29800F5F66C /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 6A61B54B1441E29800F5F66C /* Credits.rtf */; };
+		6A61B5501441E29800F5F66C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A61B54F1441E29800F5F66C /* AppDelegate.m */; };
+		6A61B5531441E29800F5F66C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A61B5511441E29800F5F66C /* MainMenu.xib */; };
+		6A61B5681441E32900F5F66C /* ObjectiveFlickr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A61B5631441E31200F5F66C /* ObjectiveFlickr.framework */; };
+		6A61B56A1441E34200F5F66C /* ObjectiveFlickr.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6A61B5631441E31200F5F66C /* ObjectiveFlickr.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6A61B5621441E31200F5F66C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A61B5591441E31100F5F66C /* ObjectiveFlickr.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6A8666490F9593B200325E1C;
+			remoteInfo = "ObjectiveFlickr (framework)";
+		};
+		6A61B5641441E31200F5F66C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A61B5591441E31100F5F66C /* ObjectiveFlickr.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6ABF72E60F939BE600B9179E;
+			remoteInfo = "ObjectiveFlickr (library)";
+		};
+		6A61B5661441E31C00F5F66C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A61B5591441E31100F5F66C /* ObjectiveFlickr.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A8666480F9593B200325E1C;
+			remoteInfo = "ObjectiveFlickr (framework)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6A61B5691441E33000F5F66C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6A61B56A1441E34200F5F66C /* ObjectiveFlickr.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6A61B5381441E29800F5F66C /* OAuthTransitionMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OAuthTransitionMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A61B53C1441E29800F5F66C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		6A61B53F1441E29800F5F66C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		6A61B5401441E29800F5F66C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		6A61B5411441E29800F5F66C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6A61B5441441E29800F5F66C /* OAuthTransitionMac-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OAuthTransitionMac-Info.plist"; sourceTree = "<group>"; };
+		6A61B5461441E29800F5F66C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6A61B5481441E29800F5F66C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6A61B54A1441E29800F5F66C /* OAuthTransitionMac-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OAuthTransitionMac-Prefix.pch"; sourceTree = "<group>"; };
+		6A61B54C1441E29800F5F66C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		6A61B54E1441E29800F5F66C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		6A61B54F1441E29800F5F66C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6A61B5521441E29800F5F66C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		6A61B5591441E31100F5F66C /* ObjectiveFlickr.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectiveFlickr.xcodeproj; path = ../../ObjectiveFlickr.xcodeproj; sourceTree = "<group>"; };
+		6A61B5901441EA7900F5F66C /* SampleAPIKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleAPIKey.h; path = ../../../SampleAPIKey.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6A61B5351441E29800F5F66C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A61B5681441E32900F5F66C /* ObjectiveFlickr.framework in Frameworks */,
+				6A61B53D1441E29800F5F66C /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6A61B52D1441E29800F5F66C = {
+			isa = PBXGroup;
+			children = (
+				6A61B5591441E31100F5F66C /* ObjectiveFlickr.xcodeproj */,
+				6A61B5421441E29800F5F66C /* OAuthTransitionMac */,
+				6A61B53B1441E29800F5F66C /* Frameworks */,
+				6A61B5391441E29800F5F66C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6A61B5391441E29800F5F66C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B5381441E29800F5F66C /* OAuthTransitionMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6A61B53B1441E29800F5F66C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B53C1441E29800F5F66C /* Cocoa.framework */,
+				6A61B53E1441E29800F5F66C /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6A61B53E1441E29800F5F66C /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B53F1441E29800F5F66C /* AppKit.framework */,
+				6A61B5401441E29800F5F66C /* CoreData.framework */,
+				6A61B5411441E29800F5F66C /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		6A61B5421441E29800F5F66C /* OAuthTransitionMac */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B5901441EA7900F5F66C /* SampleAPIKey.h */,
+				6A61B54E1441E29800F5F66C /* AppDelegate.h */,
+				6A61B54F1441E29800F5F66C /* AppDelegate.m */,
+				6A61B5511441E29800F5F66C /* MainMenu.xib */,
+				6A61B5431441E29800F5F66C /* Supporting Files */,
+			);
+			path = OAuthTransitionMac;
+			sourceTree = "<group>";
+		};
+		6A61B5431441E29800F5F66C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B5441441E29800F5F66C /* OAuthTransitionMac-Info.plist */,
+				6A61B5451441E29800F5F66C /* InfoPlist.strings */,
+				6A61B5481441E29800F5F66C /* main.m */,
+				6A61B54A1441E29800F5F66C /* OAuthTransitionMac-Prefix.pch */,
+				6A61B54B1441E29800F5F66C /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6A61B55A1441E31100F5F66C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B5631441E31200F5F66C /* ObjectiveFlickr.framework */,
+				6A61B5651441E31200F5F66C /* libObjectiveFlickr.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6A61B5371441E29800F5F66C /* OAuthTransitionMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A61B5561441E29800F5F66C /* Build configuration list for PBXNativeTarget "OAuthTransitionMac" */;
+			buildPhases = (
+				6A61B5341441E29800F5F66C /* Sources */,
+				6A61B5351441E29800F5F66C /* Frameworks */,
+				6A61B5361441E29800F5F66C /* Resources */,
+				6A61B5691441E33000F5F66C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6A61B5671441E31C00F5F66C /* PBXTargetDependency */,
+			);
+			name = OAuthTransitionMac;
+			productName = OAuthTransitionMac;
+			productReference = 6A61B5381441E29800F5F66C /* OAuthTransitionMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6A61B52F1441E29800F5F66C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 6A61B5321441E29800F5F66C /* Build configuration list for PBXProject "OAuthTransitionMac" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6A61B52D1441E29800F5F66C;
+			productRefGroup = 6A61B5391441E29800F5F66C /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6A61B55A1441E31100F5F66C /* Products */;
+					ProjectRef = 6A61B5591441E31100F5F66C /* ObjectiveFlickr.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				6A61B5371441E29800F5F66C /* OAuthTransitionMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6A61B5631441E31200F5F66C /* ObjectiveFlickr.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ObjectiveFlickr.framework;
+			remoteRef = 6A61B5621441E31200F5F66C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6A61B5651441E31200F5F66C /* libObjectiveFlickr.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libObjectiveFlickr.a;
+			remoteRef = 6A61B5641441E31200F5F66C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6A61B5361441E29800F5F66C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A61B5471441E29800F5F66C /* InfoPlist.strings in Resources */,
+				6A61B54D1441E29800F5F66C /* Credits.rtf in Resources */,
+				6A61B5531441E29800F5F66C /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6A61B5341441E29800F5F66C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A61B5491441E29800F5F66C /* main.m in Sources */,
+				6A61B5501441E29800F5F66C /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6A61B5671441E31C00F5F66C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ObjectiveFlickr (framework)";
+			targetProxy = 6A61B5661441E31C00F5F66C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6A61B5451441E29800F5F66C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6A61B5461441E29800F5F66C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6A61B54B1441E29800F5F66C /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6A61B54C1441E29800F5F66C /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		6A61B5511441E29800F5F66C /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6A61B5521441E29800F5F66C /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6A61B5541441E29800F5F66C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6A61B5551441E29800F5F66C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6A61B5571441E29800F5F66C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OAuthTransitionMac/OAuthTransitionMac-Prefix.pch";
+				INFOPLIST_FILE = "OAuthTransitionMac/OAuthTransitionMac-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		6A61B5581441E29800F5F66C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OAuthTransitionMac/OAuthTransitionMac-Prefix.pch";
+				INFOPLIST_FILE = "OAuthTransitionMac/OAuthTransitionMac-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6A61B5321441E29800F5F66C /* Build configuration list for PBXProject "OAuthTransitionMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A61B5541441E29800F5F66C /* Debug */,
+				6A61B5551441E29800F5F66C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A61B5561441E29800F5F66C /* Build configuration list for PBXNativeTarget "OAuthTransitionMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A61B5571441E29800F5F66C /* Debug */,
+				6A61B5581441E29800F5F66C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6A61B52F1441E29800F5F66C /* Project object */;
+}
