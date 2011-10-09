@@ -284,7 +284,7 @@ typedef unsigned int NSUInteger;
     NSMutableString *baseString = [NSMutableString string];
     [baseString appendString:inMethod];
     [baseString appendString:@"&"];
-    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([inURL absoluteString], @"&/:=?")];
+    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([inURL absoluteString], @"&/:=?+")];
     
     NSLog(@"new args: %@", newArgs);
     
@@ -294,10 +294,12 @@ typedef unsigned int NSUInteger;
     NSMutableArray *baseStrArgs = [NSMutableArray array];
     
     for (NSString *k in sortedArgKeys) {
-        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], @"&/:=?")]];
+        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], @"&/:=?+")]];
     }
     
-    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], @"&/:=?")];
+    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], @"&/:=?+")];
+    
+    NSLog(@"baseStr: %@", baseString);
     
     NSString *signature = OFHMACSha1Base64(signatureKey, baseString);
 
@@ -306,11 +308,13 @@ typedef unsigned int NSUInteger;
     NSMutableArray *queryArray = [NSMutableArray array];
     
     for (NSString *k in [newArgs allKeys]) {
-        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSString([newArgs objectForKey:k])]];
+        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], @"&/:=?+")]];
     }
     
     
     NSString *newURLStringWithQuery = [NSString stringWithFormat:@"%@?%@", [inURL absoluteString], [queryArray componentsJoinedByString:@"&"]];
+    NSLog(@"URL: %@", newURLStringWithQuery);
+    
     return [NSURL URLWithString:newURLStringWithQuery];
 }
 @end
