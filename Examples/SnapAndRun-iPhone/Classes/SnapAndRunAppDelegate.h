@@ -46,7 +46,7 @@ extern NSString *SnapAndRunShouldUpdateAuthInfoNotification;
 }
 
 + (SnapAndRunAppDelegate *)sharedDelegate;
-- (void)setAndStoreFlickrAuthToken:(NSString *)inAuthToken;
+- (void)setAndStoreFlickrAuthToken:(NSString *)inAuthToken secret:(NSString *)inSecret;
 
 - (IBAction)cancelAction;
 
@@ -60,3 +60,5 @@ extern NSString *SnapAndRunShouldUpdateAuthInfoNotification;
 @property (nonatomic, readonly) OFFlickrAPIContext *flickrContext;
 @property (nonatomic, retain) NSString *flickrUserName;
 @end
+
+extern NSString *SRCallbackURLBaseString;

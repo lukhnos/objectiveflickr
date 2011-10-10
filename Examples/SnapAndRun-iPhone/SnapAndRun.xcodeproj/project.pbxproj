@@ -97,22 +97,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				6AA112381442678000A02F41 /* SystemConfiguration.framework */,
-				6AA1122F1442676A00A02F41 /* ObjectiveFlickr.h */,
-				6AA112301442676A00A02F41 /* ObjectiveFlickr.m */,
-				6AA112311442676A00A02F41 /* OFUtilities.h */,
-				6AA112321442676A00A02F41 /* OFUtilities.m */,
-				6AA112331442676A00A02F41 /* OFXMLMapper.h */,
-				6AA112341442676A00A02F41 /* OFXMLMapper.m */,
-				6AA112251442676100A02F41 /* LFHTTPRequest.h */,
-				6AA112261442676100A02F41 /* LFHTTPRequest.m */,
-				6AA112271442676100A02F41 /* LFSiteReachability.h */,
-				6AA112281442676100A02F41 /* LFSiteReachability.m */,
-				6AA112291442676100A02F41 /* LFWebAPIKit.h */,
-				6AA1122A1442676100A02F41 /* NSData+LFHTTPFormExtensions.h */,
-				6AA1122B1442676100A02F41 /* NSData+LFHTTPFormExtensions.m */,
 				6AE01F0C0F94E3A7000FE708 /* SampleAPIKey.h */,
 				080E96DDFE201D6D7F000001 /* Classes */,
+				6AA1124914428FF900A02F41 /* ObjectiveFlickr */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -144,12 +131,33 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6AA112381442678000A02F41 /* SystemConfiguration.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 				6AE01E540F94DFC4000FE708 /* CFNetwork.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6AA1124914428FF900A02F41 /* ObjectiveFlickr */ = {
+			isa = PBXGroup;
+			children = (
+				6AA1122F1442676A00A02F41 /* ObjectiveFlickr.h */,
+				6AA112301442676A00A02F41 /* ObjectiveFlickr.m */,
+				6AA112311442676A00A02F41 /* OFUtilities.h */,
+				6AA112321442676A00A02F41 /* OFUtilities.m */,
+				6AA112331442676A00A02F41 /* OFXMLMapper.h */,
+				6AA112341442676A00A02F41 /* OFXMLMapper.m */,
+				6AA112251442676100A02F41 /* LFHTTPRequest.h */,
+				6AA112261442676100A02F41 /* LFHTTPRequest.m */,
+				6AA112271442676100A02F41 /* LFSiteReachability.h */,
+				6AA112281442676100A02F41 /* LFSiteReachability.m */,
+				6AA112291442676100A02F41 /* LFWebAPIKit.h */,
+				6AA1122A1442676100A02F41 /* NSData+LFHTTPFormExtensions.h */,
+				6AA1122B1442676100A02F41 /* NSData+LFHTTPFormExtensions.m */,
+			);
+			name = ObjectiveFlickr;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

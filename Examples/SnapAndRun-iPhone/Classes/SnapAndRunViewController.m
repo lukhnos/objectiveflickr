@@ -28,6 +28,7 @@
 #import "SnapAndRunViewController.h"
 #import "SnapAndRunAppDelegate.h"
 
+NSString *kFetchRequestTokenStep = @"kFetchRequestTokenStep";
 NSString *kGetUserInfoStep = @"kGetUserInfoStep";
 NSString *kSetImagePropertiesStep = @"kSetImagePropertiesStep";
 NSString *kUploadImageStep = @"kUploadImageStep";
@@ -62,7 +63,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
     [super viewDidLoad];
     self.title = @"Snap and Run";
 	
-	if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.authToken length]) {
+	if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.OAuthToken length]) {
 		authorizeButton.enabled = NO;
 	}
 	
@@ -82,7 +83,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 
 - (void)updateUserInterface:(NSNotification *)notification
 {
-	if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.authToken length]) {		
+	if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.OAuthToken length]) {		
 		[authorizeButton setTitle:@"Reauthorize" forState:UIControlStateNormal];
 		[authorizeButton setTitle:@"Reauthorize" forState:UIControlStateHighlighted];
 		[authorizeButton setTitle:@"Reauthorize" forState:UIControlStateDisabled];		
@@ -144,14 +145,30 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 
 - (IBAction)authorizeAction
 {
-	authorizeButton.enabled = NO;
-	authorizeDescriptionLabel.text = @"Logging in...";
+    // if there's already OAuthToken, we want to reauthorize
+    if ([[SnapAndRunAppDelegate sharedDelegate].flickrContext.OAuthToken length]) {
+        [[SnapAndRunAppDelegate sharedDelegate] setAndStoreFlickrAuthToken:nil secret:nil];
+    }
     
-    NSURL *loginURL = [[SnapAndRunAppDelegate sharedDelegate].flickrContext loginURLFromFrobDictionary:nil requestedPermission:OFFlickrWritePermission];
-    [[UIApplication sharedApplication] openURL:loginURL];
+	authorizeButton.enabled = NO;
+	authorizeDescriptionLabel.text = @"Authenticating...";    
+
+    self.flickrRequest.sessionInfo = kFetchRequestTokenStep;
+    [self.flickrRequest fetchOAuthRequestTokenWithCallbackURL:[NSURL URLWithString:SRCallbackURLBaseString]];
 }
 
 #pragma mark OFFlickrAPIRequest delegate methods
+
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthRequestToken:(NSString *)inRequestToken secret:(NSString *)inSecret
+{
+    // these two lines are important
+    [SnapAndRunAppDelegate sharedDelegate].flickrContext.OAuthToken = inRequestToken;
+    [SnapAndRunAppDelegate sharedDelegate].flickrContext.OAuthTokenSecret = inSecret;
+
+    NSURL *authURL = [[SnapAndRunAppDelegate sharedDelegate].flickrContext userAuthorizationURLWithRequestToken:inRequestToken requestedPermission:OFFlickrWritePermission];
+    [[UIApplication sharedApplication] openURL:authURL];    
+}
+
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
 {
     NSLog(@"%s %@ %@", __PRETTY_FUNCTION__, inRequest.sessionInfo, inResponseDictionary);

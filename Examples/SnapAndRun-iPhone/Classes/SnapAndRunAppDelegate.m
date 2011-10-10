@@ -32,9 +32,13 @@
 NSString *SnapAndRunShouldUpdateAuthInfoNotification = @"SnapAndRunShouldUpdateAuthInfoNotification";
 
 // preferably, the auth token is stored in the keychain, but since working with keychain is a pain, we use the simpler default system
-NSString *kStoredAuthTokenKeyName = @"FlickrAuthToken";
-NSString *kGetAuthTokenStep = @"kGetAuthTokenStep";
+NSString *kStoredAuthTokenKeyName = @"FlickrOAuthToken";
+NSString *kStoredAuthTokenSecretKeyName = @"FlickrOAuthTokenSecret";
+
+NSString *kGetAccessTokenStep = @"kGetAccessTokenStep";
 NSString *kCheckTokenStep = @"kCheckTokenStep";
+
+NSString *SRCallbackURLBaseString = @"snapnrun://auth";
 
 @implementation SnapAndRunAppDelegate
 - (void)dealloc
@@ -57,43 +61,44 @@ NSString *kCheckTokenStep = @"kCheckTokenStep";
 	return flickrRequest;
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-	// query has the form of "&frob=", the rest is the frob
-	NSString *frob = [[url query] substringFromIndex:6];
-
-	[self flickrRequest].sessionInfo = kGetAuthTokenStep;
-	[flickrRequest callAPIMethodWithGET:@"flickr.auth.getToken" arguments:[NSDictionary dictionaryWithObjectsAndKeys:frob, @"frob", nil]];
-	
-	[activityIndicator startAnimating];
-	[viewController.view addSubview:progressView];
+    if ([self flickrRequest].sessionInfo) {
+        // already running some other request
+        NSLog(@"Already running some other request");
+    }
+    else {
+        NSString *token = nil;
+        NSString *verifier = nil;
+        BOOL result = OFExtractOAuthCallback(url, [NSURL URLWithString:SRCallbackURLBaseString], &token, &verifier);
+        
+        if (!result) {
+            NSLog(@"Cannot obtain token/secret from URL: %@", [url absoluteString]);
+            return NO;
+        }
+        
+        [self flickrRequest].sessionInfo = kGetAccessTokenStep;
+        [flickrRequest fetchOAuthAccessTokenWithRequestToken:token verifier:verifier];
+        [activityIndicator startAnimating];
+        [viewController.view addSubview:progressView];
+    }
 	
     return YES;
 }
 
-- (void)_applicationDidFinishLaunchingContinued
-{
-	if ([self flickrRequest].sessionInfo) {
-		// is getting auth token
-		return;
-	}
-	
-	if ([self.flickrContext.authToken length]) {
-		[self flickrRequest].sessionInfo = kCheckTokenStep;
-		[flickrRequest callAPIMethodWithGET:@"flickr.auth.checkToken" arguments:nil];
-
-		[activityIndicator startAnimating];
-		[viewController.view addSubview:progressView];
-	}
-}
-        
-- (void)applicationDidFinishLaunching:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];
-	
-	// Apple trick: Do this so after we got a chance to let application:handleOpenURL: run before our next stage of init...
-	[self performSelector:@selector(_applicationDidFinishLaunchingContinued) withObject:nil afterDelay:0.0];
+	    
+    if ([self.flickrContext.OAuthToken length]) {
+		[self flickrRequest].sessionInfo = kCheckTokenStep;
+		[flickrRequest callAPIMethodWithGET:@"flickr.test.login" arguments:nil];
+        
+		[activityIndicator startAnimating];
+		[viewController.view addSubview:progressView];
+	}
+    return YES;
 }
 
 + (SnapAndRunAppDelegate *)sharedDelegate
@@ -106,19 +111,24 @@ NSString *kCheckTokenStep = @"kCheckTokenStep";
 	[flickrRequest cancel];	
 	[activityIndicator stopAnimating];
 	[progressView removeFromSuperview];
-	[self setAndStoreFlickrAuthToken:nil];
+	[self setAndStoreFlickrAuthToken:nil secret:nil];
 	[[NSNotificationCenter defaultCenter] postNotificationName:SnapAndRunShouldUpdateAuthInfoNotification object:self];
 }
 
-- (void)setAndStoreFlickrAuthToken:(NSString *)inAuthToken
+- (void)setAndStoreFlickrAuthToken:(NSString *)inAuthToken secret:(NSString *)inSecret
 {
-	if (![inAuthToken length]) {
-		self.flickrContext.authToken = nil;
+	if (![inAuthToken length] || ![inSecret length]) {
+		self.flickrContext.OAuthToken = nil;
+        self.flickrContext.OAuthTokenSecret = nil;        
 		[[NSUserDefaults standardUserDefaults] removeObjectForKey:kStoredAuthTokenKeyName];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kStoredAuthTokenSecretKeyName];
+
 	}
 	else {
-		self.flickrContext.authToken = inAuthToken;
+		self.flickrContext.OAuthToken = inAuthToken;
+        self.flickrContext.OAuthTokenSecret = inSecret;
 		[[NSUserDefaults standardUserDefaults] setObject:inAuthToken forKey:kStoredAuthTokenKeyName];
+		[[NSUserDefaults standardUserDefaults] setObject:inSecret forKey:kStoredAuthTokenSecretKeyName];
 	}
 }
 
@@ -127,9 +137,12 @@ NSString *kCheckTokenStep = @"kCheckTokenStep";
     if (!flickrContext) {
         flickrContext = [[OFFlickrAPIContext alloc] initWithAPIKey:OBJECTIVE_FLICKR_SAMPLE_API_KEY sharedSecret:OBJECTIVE_FLICKR_SAMPLE_API_SHARED_SECRET];
         
-        NSString *authToken;
-        if ((authToken = [[NSUserDefaults standardUserDefaults] objectForKey:kStoredAuthTokenKeyName])) {
-            flickrContext.authToken = authToken;
+        NSString *authToken = [[NSUserDefaults standardUserDefaults] objectForKey:kStoredAuthTokenKeyName];
+        NSString *authTokenSecret = [[NSUserDefaults standardUserDefaults] objectForKey:kStoredAuthTokenSecretKeyName];
+        
+        if (([authToken length] > 0) && ([authTokenSecret length] > 0)) {
+            flickrContext.OAuthToken = authToken;
+            flickrContext.OAuthTokenSecret = authTokenSecret;
         }
     }
     
@@ -137,27 +150,35 @@ NSString *kCheckTokenStep = @"kCheckTokenStep";
 }
 
 #pragma mark OFFlickrAPIRequest delegate methods
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didObtainOAuthAccessToken:(NSString *)inAccessToken secret:(NSString *)inSecret userFullName:(NSString *)inFullName userName:(NSString *)inUserName userNSID:(NSString *)inNSID
 {
-	if (inRequest.sessionInfo == kGetAuthTokenStep) {
-		[self setAndStoreFlickrAuthToken:[[inResponseDictionary valueForKeyPath:@"auth.token"] textContent]];
-		self.flickrUserName = [inResponseDictionary valueForKeyPath:@"auth.user.username"];
-	}
-	else if (inRequest.sessionInfo == kCheckTokenStep) {
-		self.flickrUserName = [inResponseDictionary valueForKeyPath:@"auth.user.username"];
+    [self setAndStoreFlickrAuthToken:inAccessToken secret:inSecret];
+    self.flickrUserName = inUserName;    
+
+	[activityIndicator stopAnimating];
+	[progressView removeFromSuperview];
+	[[NSNotificationCenter defaultCenter] postNotificationName:SnapAndRunShouldUpdateAuthInfoNotification object:self];
+    [self flickrRequest].sessionInfo = nil;
+}
+
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
+{    
+    if (inRequest.sessionInfo == kCheckTokenStep) {
+		self.flickrUserName = [inResponseDictionary valueForKeyPath:@"user.username._text"];
 	}
 	
 	[activityIndicator stopAnimating];
 	[progressView removeFromSuperview];
 	[[NSNotificationCenter defaultCenter] postNotificationName:SnapAndRunShouldUpdateAuthInfoNotification object:self];
+    [self flickrRequest].sessionInfo = nil;    
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
 {
-	if (inRequest.sessionInfo == kGetAuthTokenStep) {
+	if (inRequest.sessionInfo == kGetAccessTokenStep) {
 	}
 	else if (inRequest.sessionInfo == kCheckTokenStep) {
-		[self setAndStoreFlickrAuthToken:nil];
+		[self setAndStoreFlickrAuthToken:nil secret:nil];
 	}
 	
 	[activityIndicator stopAnimating];
