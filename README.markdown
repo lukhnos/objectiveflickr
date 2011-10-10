@@ -4,6 +4,22 @@ ObjectiveFlickr
 ObjectiveFlickr is a Flickr API framework designed for Mac and iPhone apps.
 
 
+OAuth Support
+=============
+ObjectiveFlickr now supports Flickr's new OAuth-based authentication process.
+I'll post more about it in the coming week. The SnapAndRun sample is updated
+to reflect the usage. A new Mac sample, OAuthTransitionMac, demonstrates
+how to use the new OAuth-based API and also how to migrate your existing
+auth tokens. OAuthTransitionMac uses ARC and therefore also shows how to 
+use ObjectiveFlickr, which is a non-ARC library, with an ARC app.
+
+iOS support in ObjectiveFlickr was developed mostly during the iPhone OS 2.0
+days and it shows. More update work will be required to reflect the changes
+in the iOS development process. Your contribution (like updating this
+README, submitting new samples or test cases) is greatly welcome -- and it
+will benefit the iOS open source development community, too!
+
+
 What's New in 2.0
 =================
 
