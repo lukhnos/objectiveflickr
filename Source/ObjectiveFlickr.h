@@ -57,7 +57,7 @@ extern NSString *const OFFlickrDeletePermission;
 - (id)initWithAPIKey:(NSString *)inKey sharedSecret:(NSString *)inSharedSecret;
 
 // OAuth URL
-- (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken;
+- (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken requestedPermission:(NSString *)inPermission;
 
 
 // URL provisioning

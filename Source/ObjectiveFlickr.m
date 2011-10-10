@@ -47,6 +47,8 @@ NSString *const OFFlickrAPIRequestOAuthErrorUserInfoKey = @"OAuthError";
 NSString *const OFFetchOAuthRequestTokenSession = @"FetchOAuthRequestToken";
 NSString *const OFFetchOAuthAccessTokenSession = @"FetchOAuthAccessToken";
 
+static NSString *const kEscapeChars = @"`~!@#$^&*()=+[]\\{}|;':\",/<>?";
+
 
 // compatibility typedefs
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
@@ -110,9 +112,15 @@ typedef unsigned int NSUInteger;
     return authToken;
 }
 
-- (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken
+- (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken requestedPermission:(NSString *)inPermission
 {
-    NSString *URLString = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@", inRequestToken];
+    NSString *perm = @"";
+    
+    if ([inPermission length] > 0) {
+        perm = [NSString stringWithFormat:@"&perm=%@", inPermission];
+    }
+    
+    NSString *URLString = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@%@", inRequestToken, perm];
     return [NSURL URLWithString:URLString];
 }
 
@@ -326,7 +334,7 @@ typedef unsigned int NSUInteger;
     NSMutableString *baseString = [NSMutableString string];
     [baseString appendString:inMethod];
     [baseString appendString:@"&"];
-    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([inURL absoluteString], @"&/:=?+")];
+    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([inURL absoluteString], kEscapeChars)];
     
     NSArray *sortedArgKeys = [[newArgs allKeys] sortedArrayUsingSelector:@selector(compare:)];
     [baseString appendString:@"&"];
@@ -334,10 +342,12 @@ typedef unsigned int NSUInteger;
     NSMutableArray *baseStrArgs = [NSMutableArray array];
     
     for (NSString *k in sortedArgKeys) {
-        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], @"&/:=?+")]];
+        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], kEscapeChars)]];
     }
     
-    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], @"&/:=?+")];
+    [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], kEscapeChars)];
+    
+    NSLog(@"baseString: %@", baseString);
     
     NSString *signature = OFHMACSha1Base64(signatureKey, baseString);
     
@@ -351,7 +361,7 @@ typedef unsigned int NSUInteger;
     NSMutableArray *queryArray = [NSMutableArray array];
     
     for (NSString *k in [newArgs allKeys]) {
-        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], @"&/:=?+")]];
+        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], kEscapeChars)]];
     }
     
     
@@ -489,6 +499,27 @@ typedef unsigned int NSUInteger;
     return NO;
 }
 
+static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
+{
+    NSMutableString *combinedDataString = [NSMutableString string];
+    NSEnumerator *enumerator = [formDictionary keyEnumerator];
+    
+    id key = [enumerator nextObject];
+    if (key) {
+        id value = [formDictionary objectForKey:key];
+        [combinedDataString appendString:[NSString stringWithFormat:@"%@=%@", 
+                                          [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                                          OFEscapedURLStringFromNSStringWithExtraEscapedChars(value, kEscapeChars)]];
+        
+		while ((key = [enumerator nextObject])) {
+			value = [formDictionary objectForKey:key];
+			[combinedDataString appendString:[NSString stringWithFormat:@"&%@=%@", [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], OFEscapedURLStringFromNSStringWithExtraEscapedChars(value, kEscapeChars)]];
+		}
+	}
+    
+    return [combinedDataString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];    
+}
+
 - (BOOL)callAPIMethodWithPOST:(NSString *)inMethodName arguments:(NSDictionary *)inArguments
 {
     if ([HTTPRequest isRunning]) {
@@ -498,8 +529,24 @@ typedef unsigned int NSUInteger;
     // combine the parameters 
 	NSMutableDictionary *newArgs = inArguments ? [NSMutableDictionary dictionaryWithDictionary:inArguments] : [NSMutableDictionary dictionary];
 	[newArgs setObject:inMethodName forKey:@"method"];	
-	NSString *arguments = [context signedQueryFromArguments:newArgs];
-    NSData *postData = [arguments dataUsingEncoding:NSUTF8StringEncoding];
+    
+    
+    NSData *postData = nil;
+    
+    if ([context OAuthToken] && [context OAuthTokenSecret]) {
+        NSDictionary *signedArgs = [context signedOAuthHTTPQueryArguments:newArgs baseURL:[NSURL URLWithString:[context RESTAPIEndpoint]] method:LFHTTPRequestPOSTMethod];
+        
+        NSLog(@"Original args: %@\nSigned args: %@", newArgs, signedArgs);
+        
+        postData = NSDataFromOAuthPreferredWebForm(signedArgs);
+    }
+    else {    
+        NSString *arguments = [context signedQueryFromArguments:newArgs];
+        postData = [arguments dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
+    
+    [postData writeToFile:@"/tmp/output.bin" atomically:YES];
 
 	[HTTPRequest setContentType:LFHTTPRequestWWWFormURLEncodedContentType];
 	return [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context RESTAPIEndpoint]] withData:postData];
@@ -657,6 +704,7 @@ typedef unsigned int NSUInteger;
         }
     }
     else {
+        [[request receivedData] writeToFile:@"/tmp/received.bin" atomically:YES];
         NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	
         NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
         NSString *stat = [rsp objectForKey:@"stat"];
