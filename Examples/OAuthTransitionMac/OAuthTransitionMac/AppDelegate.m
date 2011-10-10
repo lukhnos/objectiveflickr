@@ -58,6 +58,7 @@ const NSTimeInterval kTryObtainAuthTokenInterval = 3.0;
     
     _flickrRequest = [[OFFlickrAPIRequest alloc] initWithAPIContext:_flickrContext];
     _flickrRequest.delegate = self;
+    _flickrRequest.requestTimeoutInterval = 60.0;
 }
 
 - (IBAction)oldStyleAuthentication:(id)sender
@@ -87,6 +88,47 @@ const NSTimeInterval kTryObtainAuthTokenInterval = 3.0;
     if (_flickrContext.OAuthToken || _flickrContext.authToken) {
         _flickrRequest.sessionInfo = kTestLogin;
         [_flickrRequest callAPIMethodWithGET:@"flickr.test.login" arguments:nil];
+        [_progressLabel setStringValue:@"Calling flickr.test.login..."];
+
+        
+        // this tests flickr.photos.getInfo
+        /*
+         NSString *somePhotoID = @"42";        
+         [_flickrRequest callAPIMethodWithGET:@"flickr.photos.getInfo" arguments:[NSDictionary dictionaryWithObjectsAndKeys:somePhotoID, @"photo_id", nil]];
+         [_progressLabel setStringValue:@"Calling flickr.photos.getInfo..."];
+
+         */
+        
+        
+        // this tests flickr.photos.setMeta, a method that requires POST
+        /*
+         NSString *somePhotoID = @"42";
+         NSString *someTitle = @"Lorem iprum!";
+         NSString *someDesc = @"^^ :)";
+         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                somePhotoID, @"photo_id", 
+                                someTitle, @"title",
+                                someDesc, @"description",
+                                nil];
+         [_flickrRequest callAPIMethodWithPOST:@"flickr.photos.setMeta" arguments:params];
+         [_progressLabel setStringValue:@"Calling flickr.photos.setMeta..."];
+
+         */
+        
+         
+        // test photo uploading
+        /*
+         NSString *somePath = @"/tmp/test.png";
+         NSString *someFilename = @"Foo.png";
+         NSString *someTitle = @"Lorem iprum!";
+         NSString *someDesc = @"^^ :)";
+         NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                someTitle, @"title",
+                                someDesc, @"description",
+                                nil];        
+         [_flickrRequest uploadImageStream:[NSInputStream inputStreamWithFileAtPath:somePath] suggestedFilename:someFilename MIMEType:@"image/png" arguments:params];
+         [_progressLabel setStringValue:@"Uploading photos..."];
+        */
         
         [_progressIndicator startAnimation:self];
         [_progressLabel setStringValue:@"Calling flickr.test.login..."];
@@ -121,7 +163,7 @@ const NSTimeInterval kTryObtainAuthTokenInterval = 3.0;
     _flickrContext.OAuthToken = inRequestToken;
     _flickrContext.OAuthTokenSecret = inSecret;
     
-    NSURL *authURL = [_flickrContext userAuthorizationURLWithRequestToken:inRequestToken];
+    NSURL *authURL = [_flickrContext userAuthorizationURLWithRequestToken:inRequestToken requestedPermission:OFFlickrWritePermission];
     NSLog(@"Auth URL: %@", [authURL absoluteString]);
     [[NSWorkspace sharedWorkspace] openURL:authURL];
     
@@ -152,7 +194,7 @@ const NSTimeInterval kTryObtainAuthTokenInterval = 3.0;
         _frob = [[inResponseDictionary valueForKeyPath:@"frob._text"] copy];
         NSLog(@"%@: %@", kFrobRequest, _frob);
         
-        NSURL *authURL = [_flickrContext loginURLFromFrobDictionary:inResponseDictionary requestedPermission:OFFlickrReadPermission];
+        NSURL *authURL = [_flickrContext loginURLFromFrobDictionary:inResponseDictionary requestedPermission:OFFlickrWritePermission];
         [[NSWorkspace sharedWorkspace] openURL:authURL];
         
         [self performSelector:@selector(tryObtainAuthToken) withObject:nil afterDelay:kTryObtainAuthTokenInterval];
@@ -219,6 +261,6 @@ const NSTimeInterval kTryObtainAuthTokenInterval = 3.0;
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes
 {
-    
+    NSLog(@"%s %lu/%lu", __PRETTY_FUNCTION__, inSentBytes, inTotalBytes);
 }
 @end
