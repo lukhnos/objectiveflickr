@@ -340,8 +340,9 @@ typedef unsigned int NSUInteger;
     [baseString appendString:@"&"];
     
     NSMutableArray *baseStrArgs = [NSMutableArray array];
-    
-    for (NSString *k in sortedArgKeys) {
+    NSEnumerator *kenum = [sortedArgKeys objectEnumerator];
+    NSString *k;
+    while ((k = [kenum nextObject]) != nil) {
         [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], kEscapeChars)]];
     }
     
@@ -357,8 +358,10 @@ typedef unsigned int NSUInteger;
 {
     NSDictionary *newArgs = [self signedOAuthHTTPQueryArguments:inArguments baseURL:inURL method:inMethod];
     NSMutableArray *queryArray = [NSMutableArray array];
-    
-    for (NSString *k in [newArgs allKeys]) {
+
+    NSEnumerator *kenum = [newArgs keyEnumerator];
+    NSString *k;
+    while ((k = [kenum nextObject]) != nil) {
         [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], kEscapeChars)]];
     }
     
@@ -551,12 +554,29 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
         return NO;
     }
     
-    if (![[context authToken] length]) {
+    // get the api_sig
+    NSArray *argComponents = nil;
+    
+    if ([context OAuthToken] && [context OAuthTokenSecret]) {
+        NSMutableArray *newArgsComps = [NSMutableArray array];
+        NSDictionary *signedArgs = [context signedOAuthHTTPQueryArguments:(inArguments ? inArguments : [NSDictionary dictionary]) baseURL:[NSURL URLWithString:[context uploadEndpoint]] method:LFHTTPRequestPOSTMethod];
+        
+        NSEnumerator *keyEnum = [signedArgs keyEnumerator];
+        NSString *key;
+        while ((key = [keyEnum nextObject]) != nil) {
+            NSString *value = [signedArgs valueForKey:key];
+            [newArgsComps addObject:[NSArray arrayWithObjects:key, value, nil]];
+        }
+        
+        argComponents = newArgsComps;
+    }
+    else if ([[context authToken] length] > 0) {
+        argComponents = [[self context] signedArgumentComponentsFromArguments:(inArguments ? inArguments : [NSDictionary dictionary]) useURIEscape:NO];
+    }
+    else {
         return NO;
     }
-
-    // get the api_sig
-    NSArray *argComponents = [[self context] signedArgumentComponentsFromArguments:(inArguments ? inArguments : [NSDictionary dictionary]) useURIEscape:NO];
+    
     NSString *separator = OFGenerateUUIDString();
     NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", separator];
     
