@@ -19,7 +19,7 @@ in the iOS development process. Your contribution (like updating this
 README, submitting new samples or test cases) is greatly welcome -- and it
 will benefit the iOS open source development community, too!
 
-**Update** Please refer to [my blog post](http://blog.lukhnos.org/post/11275346353/flickr-oauth-support-in-objectiveflickr)
+**Update**. Please refer to [my blog post](http://blog.lukhnos.org/post/11275346353/flickr-oauth-support-in-objectiveflickr)
 for the steps you need to take for the transition.
 
 
@@ -244,7 +244,7 @@ and also design your UI accordingly.
 Auth Considerations
 ===================
 
-**Deprecated** The original authentication process is now deprecated by Flickr.
+**Deprecated**. The original authentication process is now deprecated by Flickr.
 Please refer to [my blog post](http://blog.lukhnos.org/post/11275346353/flickr-oauth-support-in-objectiveflickr)
 for the steps you need to take for the new setup.
 
@@ -276,7 +276,7 @@ into the two major types of app auth.
 Desktop App Auth, the Old Way (Deprecated)
 ------------------------------------------
 
-**Deprecated** The original authentication process is now deprecated by Flickr.
+**Deprecated**. The original authentication process is now deprecated by Flickr.
 Please refer to [my blog post](http://blog.lukhnos.org/post/11275346353/flickr-oauth-support-in-objectiveflickr)
 for the steps you need to take for the new setup.
 
@@ -319,7 +319,7 @@ To map that into your app's internal workings, you need to do these:
 iPhone App Auth and the New Way (Deprecated)
 --------------------------------------------
 
-**Deprecated** The original authentication process is now deprecated by Flickr.
+**Deprecated**. The original authentication process is now deprecated by Flickr.
 Please refer to [my blog post](http://blog.lukhnos.org/post/11275346353/flickr-oauth-support-in-objectiveflickr)
 for the steps you need to take for the new setup.
 
