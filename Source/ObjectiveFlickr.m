@@ -347,8 +347,6 @@ typedef unsigned int NSUInteger;
     
     [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], kEscapeChars)];
     
-    NSLog(@"baseString: %@", baseString);
-    
     NSString *signature = OFHMACSha1Base64(signatureKey, baseString);
     
     [newArgs setObject:signature forKey:@"oauth_signature"];
@@ -536,8 +534,6 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
     if ([context OAuthToken] && [context OAuthTokenSecret]) {
         NSDictionary *signedArgs = [context signedOAuthHTTPQueryArguments:newArgs baseURL:[NSURL URLWithString:[context RESTAPIEndpoint]] method:LFHTTPRequestPOSTMethod];
         
-        NSLog(@"Original args: %@\nSigned args: %@", newArgs, signedArgs);
-        
         postData = NSDataFromOAuthPreferredWebForm(signedArgs);
     }
     else {    
@@ -545,9 +541,6 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
         postData = [arguments dataUsingEncoding:NSUTF8StringEncoding];
     }
     
-    
-    [postData writeToFile:@"/tmp/output.bin" atomically:YES];
-
 	[HTTPRequest setContentType:LFHTTPRequestWWWFormURLEncodedContentType];
 	return [HTTPRequest performMethod:LFHTTPRequestPOSTMethod onURL:[NSURL URLWithString:[context RESTAPIEndpoint]] withData:postData];
 }
@@ -704,7 +697,6 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
         }
     }
     else {
-        [[request receivedData] writeToFile:@"/tmp/received.bin" atomically:YES];
         NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request receivedData]];	
         NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
         NSString *stat = [rsp objectForKey:@"stat"];
