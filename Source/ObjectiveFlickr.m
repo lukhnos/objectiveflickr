@@ -114,13 +114,13 @@ typedef unsigned int NSUInteger;
 
 - (NSURL *)userAuthorizationURLWithRequestToken:(NSString *)inRequestToken requestedPermission:(NSString *)inPermission
 {
-    NSString *perm = @"";
+    NSString *perms = @"";
     
     if ([inPermission length] > 0) {
-        perm = [NSString stringWithFormat:@"&perm=%@", inPermission];
+        perms = [NSString stringWithFormat:@"&perms=%@", inPermission];
     }
     
-    NSString *URLString = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@%@", inRequestToken, perm];
+    NSString *URLString = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@%@", inRequestToken, perms];
     return [NSURL URLWithString:URLString];
 }
 
