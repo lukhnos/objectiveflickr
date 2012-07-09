@@ -214,7 +214,7 @@ NSString *kUploadImageStep = @"kUploadImageStep";
 		snapPictureDescriptionLabel.text = @"Waiting for Flickr...";
 	}
 	else {
-		snapPictureDescriptionLabel.text = [NSString stringWithFormat:@"%lu/%lu (KB)", inSentBytes / 1024, inTotalBytes / 1024];
+		snapPictureDescriptionLabel.text = [NSString stringWithFormat:@"%u/%u (KB)", inSentBytes / 1024, inTotalBytes / 1024];
 	}
 }
 

@@ -109,7 +109,7 @@ extern NSString *const LFHTTPRequestPOSTMethod;
 - (unsigned int)expectedDataLength;
 #endif
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
 
 @property (copy) NSDictionary *requestHeader;
 @property (assign) NSTimeInterval timeoutInterval;

@@ -47,7 +47,7 @@ extern NSString *const OFXMLTextContentKey;
 @interface NSDictionary (OFXMLMapperExtension)
 - (NSString *)textContent;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
 @property (nonatomic, readonly) NSString *textContent;
 #endif
 @end

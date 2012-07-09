@@ -29,7 +29,7 @@
 #import <WebKit/WebKit.h>
 #import <ObjectiveFlickr/ObjectiveFlickr.h>
 
-@interface MainWindowController : NSWindowController
+@interface MainWindowController : NSWindowController <OFFlickrAPIRequestDelegate>
 {
 	OFFlickrAPIContext *flickrContext;
 	OFFlickrAPIRequest *flickrRequest;
