@@ -346,6 +346,7 @@
 				);
 				PRODUCT_NAME = ObjectiveFlickr;
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -372,6 +373,7 @@
 				);
 				PRODUCT_NAME = ObjectiveFlickr;
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
