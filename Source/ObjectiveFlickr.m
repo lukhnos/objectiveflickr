@@ -380,6 +380,7 @@ typedef unsigned int NSUInteger;
 - (void)dealloc
 {
     [context release];
+    HTTPRequest.delegate = nil;
     [HTTPRequest release];
     [sessionInfo release];
     
