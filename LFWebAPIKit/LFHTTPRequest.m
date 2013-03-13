@@ -211,6 +211,10 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     }
 
     if (!_receivedDataTracker) {
+        // self can be retained only by the timer (_requestMessageBodyTracker) so self can be deallocated while calling [_requestMessageBodyTracker invalidate]
+        // to avoid this problem:
+        [[self retain] autorelease];
+        
         // update one last time the total sent bytes
         if ([_delegate respondsToSelector:@selector(httpRequest:sentBytes:total:)]) {
             [_delegate httpRequest:self sentBytes:_lastSentBytes total:_lastSentBytes];
