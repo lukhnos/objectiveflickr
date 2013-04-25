@@ -211,9 +211,6 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     }
 
     if (!_receivedDataTracker) {
-        // self can be retained only by the timer (_requestMessageBodyTracker) so self can be deallocated while calling [_requestMessageBodyTracker invalidate]
-        // to avoid this problem:
-        [[self retain] autorelease];
         
         // update one last time the total sent bytes
         if ([_delegate respondsToSelector:@selector(httpRequest:sentBytes:total:)]) {
@@ -520,8 +517,8 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
     CFStreamClientContext streamContext;
     streamContext.version = 0;
     streamContext.info = self;
-    streamContext.retain = 0;
-    streamContext.release = 0;
+    streamContext.retain = (void *(*)(void *info))CFRetain;
+    streamContext.release = (void (*)(void *info))CFRelease;
     streamContext.copyDescription = 0;
 
     CFOptionFlags eventFlags = kCFStreamEventHasBytesAvailable | kCFStreamEventEndEncountered | kCFStreamEventErrorOccurred;
@@ -763,7 +760,7 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
 void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType eventType, void *clientCallBackInfo)
 {
     id pool = [NSAutoreleasePool new];
-
+    
     LFHTTPRequest *request = (LFHTTPRequest *)clientCallBackInfo;
     switch (eventType) {
         case kCFStreamEventHasBytesAvailable:
