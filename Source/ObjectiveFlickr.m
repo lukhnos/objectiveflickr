@@ -381,6 +381,7 @@ typedef unsigned int NSUInteger;
 {
     [context release];
     HTTPRequest.delegate = nil;
+    [HTTPRequest cancelWithoutDelegateMessage];
     [HTTPRequest release];
     [sessionInfo release];
     
