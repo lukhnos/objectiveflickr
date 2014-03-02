@@ -68,7 +68,7 @@ typedef unsigned int NSUInteger;
 @end
 
 #define kDefaultFlickrRESTAPIEndpoint		@"https://api.flickr.com/services/rest/"
-#define kDefaultFlickrPhotoSource			@"http://static.flickr.com/"
+#define kDefaultFlickrPhotoSource			@"https://staticflickr.com/"
 #define kDefaultFlickrPhotoWebPageSource	@"https://www.flickr.com/photos/"
 #define kDefaultFlickrAuthEndpoint			@"https://www.flickr.com/services/oauth/"
 #define kDefaultFlickrUploadEndpoint		@"https://up.flickr.com/services/upload/"
@@ -133,34 +133,44 @@ typedef unsigned int NSUInteger;
 
 - (NSURL *)photoSourceURLFromDictionary:(NSDictionary *)inDictionary size:(NSString *)inSizeModifier
 {
-	// http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}_[mstb].jpg
-	// http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}.jpg
-	
-	NSString *farm = [inDictionary objectForKey:@"farm"];
+    // From https://www.flickr.com/services/api/misc.urls.html, the URL is one of the following:
+    // * http://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+    // * http://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[mstzb].jpg
+    // * http://farm{farm-id}.staticflickr.com/{server-id}/{id}_{o-secret}_o.(jpg|gif|png)
+
+
 	NSString *photoID = [inDictionary objectForKey:@"id"];
+    NSAssert([photoID length], nil);
+
 	NSString *secret = [inDictionary objectForKey:@"secret"];
+    NSAssert([secret length], nil);
+
 	NSString *server = [inDictionary objectForKey:@"server"];
-	
-	NSMutableString *URLString = [NSMutableString stringWithString:@"http://"];
-	if ([farm length]) {
-		[URLString appendFormat:@"farm%@.", farm];
+	NSAssert([server length], nil);
+
+    NSString *farmID = [inDictionary objectForKey:@"farm"];
+
+    NSURL *basePhotoSourceURL = [NSURL URLWithString:photoSource];
+    NSString *scheme = [basePhotoSourceURL scheme];
+    NSString *host = [basePhotoSourceURL host];
+
+	if ([farmID length]) {
+        host = [NSString stringWithFormat:@"farm%@.%@", farmID, host];
 	}
-	
-	// skips "http://"
-	NSAssert([server length], @"Must have server attribute");
-	NSAssert([photoID length], @"Must have id attribute");
-	NSAssert([secret length], @"Must have secret attribute");
-	[URLString appendString:[photoSource substringFromIndex:7]];
-	[URLString appendFormat:@"%@/%@_%@", server, photoID, secret];
-	
-	if ([inSizeModifier length]) {
-		[URLString appendFormat:@"_%@.jpg", inSizeModifier];
-	}
-	else {
-		[URLString appendString:@".jpg"];
-	}
-	
-	return [NSURL URLWithString:URLString];
+
+    NSString *sizeSuffix = @"";
+    if ([inSizeModifier length]) {
+        sizeSuffix = [NSString stringWithFormat:@"_%@", inSizeModifier];
+    }
+
+    // TODO: Add originalsecret and originalformat support
+    NSString *formatExt = @"jpg";
+
+    // Combine the path
+    NSString *path = [NSString stringWithFormat:@"/%@/%@_%@%@.%@", server, photoID, secret, sizeSuffix, formatExt];
+
+    NSURL *staticURL = [[[NSURL alloc] initWithScheme:scheme host:host path:path] autorelease];
+	return staticURL;
 }
 
 - (NSURL *)photoWebPageURLFromDictionary:(NSDictionary *)inDictionary
