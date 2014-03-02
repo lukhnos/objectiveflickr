@@ -49,6 +49,13 @@ NSString *const OFFetchOAuthAccessTokenSession = @"FetchOAuthAccessToken";
 
 static NSString *const kEscapeChars = @"`~!@#$^&*()=+[]\\{}|;':\",/<>?";
 
+static void AssertIsValidURLString(NSString *urlString)
+{
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSCAssert(url, @"Must be a valid URL, but was given: %@", urlString);
+    (void) url;
+}
+
 
 // compatibility typedefs
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
@@ -183,10 +190,7 @@ typedef unsigned int NSUInteger;
 
 - (void)setPhotoSource:(NSString *)inSource
 {
-	if (![inSource hasPrefix:@"http://"]) {
-		return;
-	}
-	
+    AssertIsValidURLString(inSource);
 	NSString *tmp = photoSource;
 	photoSource = [inSource copy];
 	[tmp release];
@@ -199,10 +203,7 @@ typedef unsigned int NSUInteger;
 
 - (void)setPhotoWebPageSource:(NSString *)inSource
 {
-	if (![inSource hasPrefix:@"http://"]) {
-		return;
-	}
-	
+    AssertIsValidURLString(inSource);
 	NSString *tmp = photoWebPageSource;
 	photoWebPageSource = [inSource copy];
 	[tmp release];
