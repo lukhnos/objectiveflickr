@@ -297,7 +297,7 @@ typedef unsigned int NSUInteger;
 	NSEnumerator *argEnumerator = [sortedArgs objectEnumerator];
 	NSString *nextKey;
 	while ((nextKey = [argEnumerator nextObject])) {
-		NSString *value = [newArgs objectForKey:nextKey];
+		NSString *value = [[newArgs objectForKey:nextKey] description];
 		[sigString appendFormat:@"%@%@", nextKey, value];
 		[argArray addObject:[NSArray arrayWithObjects:nextKey, (inUseEscape ? OFEscapedURLStringFromNSString(value) : value), nil]];
 	}
@@ -354,7 +354,7 @@ typedef unsigned int NSUInteger;
     NSEnumerator *kenum = [sortedArgKeys objectEnumerator];
     NSString *k;
     while ((k = [kenum nextObject]) != nil) {
-        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], kEscapeChars)]];
+        [baseStrArgs addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([[newArgs objectForKey:k] description], kEscapeChars)]];
     }
     
     [baseString appendString:OFEscapedURLStringFromNSStringWithExtraEscapedChars([baseStrArgs componentsJoinedByString:@"&"], kEscapeChars)];
@@ -373,7 +373,7 @@ typedef unsigned int NSUInteger;
     NSEnumerator *kenum = [newArgs keyEnumerator];
     NSString *k;
     while ((k = [kenum nextObject]) != nil) {
-        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([newArgs objectForKey:k], kEscapeChars)]];
+        [queryArray addObject:[NSString stringWithFormat:@"%@=%@", k, OFEscapedURLStringFromNSStringWithExtraEscapedChars([[newArgs objectForKey:k] description], kEscapeChars)]];
     }
     
     
@@ -523,11 +523,11 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
         id value = [formDictionary objectForKey:key];
         [combinedDataString appendString:[NSString stringWithFormat:@"%@=%@", 
                                           [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                                          OFEscapedURLStringFromNSStringWithExtraEscapedChars(value, kEscapeChars)]];
+                                          OFEscapedURLStringFromNSStringWithExtraEscapedChars([value description], kEscapeChars)]];
         
 		while ((key = [enumerator nextObject])) {
 			value = [formDictionary objectForKey:key];
-			[combinedDataString appendString:[NSString stringWithFormat:@"&%@=%@", [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], OFEscapedURLStringFromNSStringWithExtraEscapedChars(value, kEscapeChars)]];
+			[combinedDataString appendString:[NSString stringWithFormat:@"&%@=%@", [(NSString*)key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], OFEscapedURLStringFromNSStringWithExtraEscapedChars([value description], kEscapeChars)]];
 		}
 	}
     
