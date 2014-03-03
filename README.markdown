@@ -680,13 +680,11 @@ Contact
 =======
 
 * lukhnos {at} lukhnos {dot} org
-* [@lukhnos](http://twitter.com/lukhnos) on Twitter
-* <http://lukhnos.tumblr.com> (blog in English)
+
 
 Links
 =====
 
 * Project host: <http://github.com/lukhnos/objectiveflickr>
-* ObjectiveFlickr blog: <http://lukhnos.org/objectiveflickr/blog/>
 * Discussion group: <http://groups.google.com/group/objectiveflickr>
 * Issue tracking: <http://code.google.com/p/objectiveflickr/issues/list>
