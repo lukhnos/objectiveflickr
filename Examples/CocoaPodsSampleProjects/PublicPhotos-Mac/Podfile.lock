@@ -1,10 +1,10 @@
 PODS:
-  - objectiveflickr (2.0.2)
+  - objectiveflickr (2.0.4)
 
 DEPENDENCIES:
   - objectiveflickr
 
 SPEC CHECKSUMS:
-  objectiveflickr: c98b7590cee96dbd4a2d2529f6910fea8e566164
+  objectiveflickr: a0fc71147e128f8bca92ac4d13da004873bd7e6b
 
 COCOAPODS: 0.29.0
