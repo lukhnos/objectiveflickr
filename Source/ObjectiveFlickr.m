@@ -30,9 +30,13 @@
 #import "OFXMLMapper.h"
 
 NSString *const OFFlickrSmallSquareSize = @"s";
+NSString *const OFFlickrLargeSquareSize = @"q";
 NSString *const OFFlickrThumbnailSize = @"t";
 NSString *const OFFlickrSmallSize = @"m";
+NSString *const OFFlickrSmallSize320 = @"n";
 NSString *const OFFlickrMediumSize = nil;
+NSString *const OFFlickrMediumSquareSize640 = @"z";
+NSString *const OFFlickrMediumSquareSize800 = @"c";
 NSString *const OFFlickrLargeSize = @"b";
 
 NSString *const OFFlickrReadPermission = @"read";
