@@ -67,11 +67,6 @@ static void AssertIsValidURLString(NSString *urlString)
 }
 
 
-// compatibility typedefs
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-typedef unsigned int NSUInteger;
-#endif
-
 @interface OFFlickrAPIContext (PrivateMethods)
 - (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments useURIEscape:(BOOL)inUseEscape;
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
@@ -277,10 +272,8 @@ typedef unsigned int NSUInteger;
     return oauthTokenSecret;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4
 @synthesize key;
 @synthesize sharedSecret;
-#endif
 @end
 
 @implementation OFFlickrAPIContext (PrivateMethods)
@@ -661,28 +654,11 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
     NSAssert(actualWrittenLength == writeLength, @"Must write multipartBegin");
     [outputStream close];
     
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
-    NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:uploadTempFilename traverseLink:YES];
-    NSAssert(fileInfo, @"Must have upload temp file");
-#else
     NSError *error = nil;
     NSDictionary *fileInfo = [[NSFileManager defaultManager] attributesOfItemAtPath:uploadTempFilename error:&error];
     NSAssert(fileInfo && !error, @"Must have upload temp file");
-#endif
     NSNumber *fileSizeNumber = [fileInfo objectForKey:NSFileSize];
-    NSUInteger fileSize = 0;
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
-    fileSize = [fileSizeNumber intValue];
-#else
-    if ([fileSizeNumber respondsToSelector:@selector(integerValue)]) {
-        fileSize = [fileSizeNumber integerValue];                    
-    }
-    else {
-        fileSize = [fileSizeNumber intValue];                    
-    }                
-#endif
-    
+    NSUInteger fileSize = [fileSizeNumber integerValue];
     NSInputStream *inputStream = [NSInputStream inputStreamWithFileAtPath:uploadTempFilename];
 	
     [HTTPRequest setContentType:contentType];
@@ -802,13 +778,8 @@ static NSData *NSDataFromOAuthPreferredWebForm(NSDictionary *formDictionary)
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:uploadTempFilename]) {
 			BOOL __unused removeResult = NO;
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4                
-			removeResult = [fileManager removeFileAtPath:uploadTempFilename handler:nil];
-#else
 			NSError *error = nil;
 			removeResult = [fileManager removeItemAtPath:uploadTempFilename error:&error];
-#endif
-			
 			NSAssert(removeResult, @"Should be able to remove temp file");
         }
         
