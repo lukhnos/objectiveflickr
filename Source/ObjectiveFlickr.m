@@ -53,6 +53,12 @@ NSString *const OFFetchOAuthAccessTokenSession = @"FetchOAuthAccessToken";
 
 static NSString *const kEscapeChars = @"`~!@#$^&*()=+[]\\{}|;':\",/<>?";
 
+static NSString *const kDefaultFlickrRESTAPIEndpoint = @"https://api.flickr.com/services/rest/";
+static NSString *const kDefaultFlickrPhotoSource = @"https://staticflickr.com/";
+static NSString *const kDefaultFlickrPhotoWebPageSource = @"https://www.flickr.com/photos/";
+static NSString *const kDefaultFlickrAuthEndpoint = @"https://www.flickr.com/services/oauth/";
+static NSString *const kDefaultFlickrUploadEndpoint = @"https://up.flickr.com/services/upload/";
+
 static void AssertIsValidURLString(NSString *urlString)
 {
     NSURL *url = [NSURL URLWithString:urlString];
@@ -71,11 +77,6 @@ typedef unsigned int NSUInteger;
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
 @end
 
-#define kDefaultFlickrRESTAPIEndpoint		@"https://api.flickr.com/services/rest/"
-#define kDefaultFlickrPhotoSource			@"https://staticflickr.com/"
-#define kDefaultFlickrPhotoWebPageSource	@"https://www.flickr.com/photos/"
-#define kDefaultFlickrAuthEndpoint			@"https://www.flickr.com/services/oauth/"
-#define kDefaultFlickrUploadEndpoint		@"https://up.flickr.com/services/upload/"
 
 @implementation OFFlickrAPIContext
 - (void)dealloc
