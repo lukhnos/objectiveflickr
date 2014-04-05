@@ -483,6 +483,7 @@
 				PRODUCT_NAME = ObjectiveFlickr;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				VALID_ARCHS = "armv6 armv7 i386 armv7s arm64";
 			};
 			name = Debug;
@@ -498,6 +499,7 @@
 				PRODUCT_NAME = ObjectiveFlickr;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				VALID_ARCHS = "armv6 armv7 armv7s arm64";
 				ZERO_LINK = NO;
 			};
