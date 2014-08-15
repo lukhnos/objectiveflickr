@@ -179,16 +179,20 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
 
 3. Create an OFFlickrAPIRequest object where appropriate, and set the delegate
 
-        OFFlickrAPIRequest *request = [[OFFlickrAPIRequest alloc] initWithAPIContext:context];
-        
-        // set the delegate, here we assume it's the controller that's creating the request object
-        [request setDelegate:self];
-        
+```obj-c
+OFFlickrAPIRequest *request = [[OFFlickrAPIRequest alloc] initWithAPIContext:context];
+
+// set the delegate, here we assume it's the controller that's creating the request object
+[request setDelegate:self];
+```
+
 4. Implement the delegate methods.
 
-        - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
-        - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
-        - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
+```obj-c
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
+- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
+```
 
     All three methods are optional ("informal protocol" in old Objective-C 
     speak; optional protocol methods in newspeak). *Nota bene*: If you
