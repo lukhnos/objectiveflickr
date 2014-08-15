@@ -245,9 +245,11 @@ To upload a picture, create an NSInputStream object from a file path
 or the image data (NSData), then make the request. Here in the example
 we assume we already have obtained the image data in JPEG, and we set
 make private the uploaded picture:
-   
-        NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData];
-        [request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
+
+```obj-c
+NSInputStream *imageStream = [NSInputStream inputStreamWithData:imageData];
+[request uploadImageStream:imageStream suggestedFilename:@"Foobar.jpg" MIMEType:@"image/jpeg" arguments:[NSDictionary dictionaryWithObjectsAndKeys:@"0", @"is_public", nil]];
+```
       
 Upload progress will be reported to the delegate method
 `flickrAPIRequest:imageUploadSentBytes:totalBytes:`
@@ -443,7 +445,7 @@ Then in your `flickrAPIRequest:didCompleteWithResponse:` delegate method,
 if you dump the received response (an NSDictionary object) with NSLog,
 you'll see something like (extraneous parts omitted):
 
-```json
+```js
 {
     auth ={
         perms = { "_text" = write };
@@ -483,7 +485,7 @@ Here is another example returned by `flickr.photos.getRecent`:
     
 And the mapped property list looks like:
 
-```json
+```js
 {
     photos = {
         page = 1;
