@@ -142,8 +142,10 @@ Because iPhone SDK does not allow dynamically linked frameworks and bundles, we 
    two paths, separately (`<OF root>` is where you checked out
    ObjectiveFlickr):
 
-        <OF root>/Source
-        <OF root>/LFWebAPIKit   
+```xml
+<OF root>/Source
+<OF root>/LFWebAPIKit   
+```
        
 6. Use `#import "ObjectiveFlickr.h"` in your project
 
@@ -175,7 +177,9 @@ Typically, to develop a Flickr app for Mac or iPhone, you need to follow the fol
 1. Get you Flickr API key at <http://www.flickr.com/services/api/keys/apply/>
 2. Create an OFFlickrAPIContext object
 
-        OFFlickrAPIContext *context = [[OFFlickrAPIContext alloc] initWithAPIKey:YOUR_KEY sharedSecret:YOUR_SHARED_SECRET];
+```obj-c
+OFFlickrAPIContext *context = [[OFFlickrAPIContext alloc] initWithAPIKey:YOUR_KEY sharedSecret:YOUR_SHARED_SECRET];
+```
 
 3. Create an OFFlickrAPIRequest object where appropriate, and set the delegate
 
@@ -200,9 +204,9 @@ OFFlickrAPIRequest *request = [[OFFlickrAPIRequest alloc] initWithAPIContext:con
     10.4, then the delegate methods are declared as informal protocols.
     In all other cases (OS X 10.5 and above or iPhone apps), you need to
     specify you are adopting the OFFlickrAPIRequestDelegate protocol. *E.g.*:
-    
-        @interface MyViewController : UIViewController <OFFlickrAPIRequestDelegate>
-
+```obj-c    
+@interface MyViewController : UIViewController <OFFlickrAPIRequestDelegate>
+```
 
 5. Call the Flickr API methods you want to use. Here are a few examples.
 
