@@ -56,18 +56,11 @@ const NSTimeInterval LFHTTPRequestDefaultTrackerFireInterval = 1.0;
 
 void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType eventType, void *clientCallBackInfo);
 
-@interface LFHTTPRequest (PrivateMethods)
-- (void)cleanUp;
-- (void)dealloc;
-- (void)handleTimeout;
-- (void)handleRequestMessageBodyTrackerTick:(NSTimer *)timer;
-- (void)handleReceivedDataTrackerTick:(NSTimer *)timer;
-- (void)readStreamHasBytesAvailable;
-- (void)readStreamErrorOccurred;
-- (void)readStreamEndEncountered;
-@end
+@implementation LFHTTPRequest
 
-@implementation LFHTTPRequest (PrivateMethods)
+#pragma mark -
+#pragma mark Private methods
+
 - (void)cleanUp
 {
     if (_readStream) {
@@ -404,9 +397,9 @@ void LFHRReadStreamClientCallBack(CFReadStreamRef stream, CFStreamEventType even
         [_delegate httpRequest:self didFailWithError:LFHTTPRequestConnectionError];
     }
 }
-@end
 
-@implementation LFHTTPRequest
+#pragma mark -
+
 - (id)init
 {
     if ((self = [super init])) {
