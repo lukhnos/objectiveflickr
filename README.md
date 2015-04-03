@@ -75,7 +75,7 @@ that make use of the tool to manage ObjectiveFlickr for you.
   ```
 
 2. Supply your own API key and shared secret. You need to copy
-   `SimpleAPIKey.h.template` to `SimpleAPIKey.h`, and fill in the two
+   `SampleAPIKey.h.template` to `SampleAPIKey.h`, and fill in the two
    macros there. If you don't have an API key, apply for yours at:
    <http://www.flickr.com/services/api/keys/apply/> .
    Make sure you have understood their terms and conditions.
