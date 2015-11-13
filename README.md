@@ -659,7 +659,7 @@ History
 
 ObjectiveFlickr was first released in late 2006. The previous version, 0.9.x,
 has undergone one rewrite and is hosted on [Google 
-Code](http://code.google.com/p/objectiveflickr/). It also has a Ruby version
+Code](https://code.google.com/p/objectiveflickr/). It also has a Ruby version
 available as a [Ruby gem](http://rubyforge.org/frs/?group_id=2698).
 
 The present rewrite derives from the experiences that I have had in
@@ -689,7 +689,7 @@ https://github.com/google/google-toolbox-for-mac), Copyright (c) 2008 Google Inc
 
 Both ObjectiveFlickr and LFWebAPIKit are released under the MIT license,
 the full text of which is printed here as follows. You can also 
-find the text at: <http://opensource.org/licenses/mit-license.php>
+find the text at: <https://opensource.org/licenses/mit-license.php>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
