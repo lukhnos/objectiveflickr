@@ -63,7 +63,7 @@ There are of course quite a few to-do's:
 Quick Start: Example Apps You Can Use
 =====================================
 
-**UPDATE 2.0.4**: If you use [CocoaPods](http://cocoapods.org/), you should
+**UPDATE 2.0.4**: If you use [CocoaPods](https://cocoapods.org/), you should
 check out [the new sample projects](https://github.com/lukhnos/objectiveflickr/tree/master/Examples/CocoaPodsSampleProjects)
 that make use of the tool to manage ObjectiveFlickr for you.
 
@@ -99,7 +99,7 @@ Adding ObjectiveFlickr to Your Project
 
 **UPDATE 2.0.4**: This section shows its age and needs updating. Pull requests
 on an up-to-date instruction will be appreciated! Meanwhile, if you use
-[CocoaPods](http://cocoapods.org/), you can easily add ObjectiveFlickr to your
+[CocoaPods](https://cocoapods.org/), you can easily add ObjectiveFlickr to your
 project by adding this one line to you `podfile`:
 
     pod 'objectiveflickr'
@@ -659,7 +659,7 @@ History
 
 ObjectiveFlickr was first released in late 2006. The previous version, 0.9.x,
 has undergone one rewrite and is hosted on [Google 
-Code](http://code.google.com/p/objectiveflickr). It also has a Ruby version
+Code](https://code.google.com/p/objectiveflickr/). It also has a Ruby version
 available as a [Ruby gem](http://rubyforge.org/frs/?group_id=2698).
 
 The present rewrite derives from the experiences that I have had in
@@ -685,11 +685,11 @@ LFWebAPIKit Copyright (c) 2007-2009 Lukhnos D. Liu and Lithoglyph Inc.
 
 One test in LFWebAPIKit (`Tests/StreamedBodySendingTest`) makes
 use of [Google Toolbox for Mac](
-http://code.google.com/p/google-toolbox-for-mac/), Copyright (c) 2008 Google Inc. Refer to `COPYING.txt` in the directory for the full text of the Apache License, Version 2.0, under which the said software is licensed.
+https://github.com/google/google-toolbox-for-mac), Copyright (c) 2008 Google Inc. Refer to `COPYING.txt` in the directory for the full text of the Apache License, Version 2.0, under which the said software is licensed.
 
 Both ObjectiveFlickr and LFWebAPIKit are released under the MIT license,
 the full text of which is printed here as follows. You can also 
-find the text at: <http://www.opensource.org/licenses/mit-license.php>
+find the text at: <https://opensource.org/licenses/mit-license.php>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -721,6 +721,6 @@ Contact
 Links
 =====
 
-* Project host: <http://github.com/lukhnos/objectiveflickr>
+* Project host: <https://github.com/lukhnos/objectiveflickr>
 * Discussion group: <http://groups.google.com/group/objectiveflickr>
 * Issue tracking: <http://code.google.com/p/objectiveflickr/issues/list>
